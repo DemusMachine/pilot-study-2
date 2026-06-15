@@ -362,12 +362,6 @@
 .card:hover .hover-img {
   opacity: 1;
 }
-
-/* Optional: fade out the SVG slightly on hover */
-.card:hover .img svg {
-  opacity: 0.2;
-  transition: opacity 0.2s ease;
-}
   .body {
     padding: 16px 18px 18px;
     display: flex;
@@ -1128,9 +1122,14 @@ function renderGrid() {
     card.dataset.familyId = p.family_id;
 
     card.innerHTML = `
-      <div class="img" style="position: relative;">
-        ${svgProduct(p)}
-        <img class="hover-img" src="images/${p.product_id}.jpg" alt="${p.display_name}" loading="lazy">
+      <div class="img">
+        ${condition === 'no_hover' 
+          ? `<img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:cover;">` 
+          : `<div style="position:relative; width:100%; height:100%;">
+              ${svgProduct(p)}
+              <img class="hover-img" src="images/${p.product_id}.jpg" alt="${p.display_name}">
+            </div>`
+        }
       </div>
       <div class="body">
         <div class="info-area">
