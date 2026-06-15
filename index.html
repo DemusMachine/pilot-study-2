@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Maison Tavola — Placemat Shopping Study</title>
+
+<style>
+  :root {
+    --ink: #2b2622;
+    --muted: #857c72;
+    --line: #e6e0d6;
+    --bg: #f7f4ee;
+    --card: #ffffff;
+    --accent: #9a6b4f;
+    --accent-dark: #7a513a;
+    --price: #a23c2e;
+    --soft: #faf8f4;
+    --shadow: 0 14px 36px rgba(120, 81, 58, 0.12);
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  body.locked {
+    overflow: hidden;
+  }
+
+  button {
+    font-family: var(--sans);
+  }
+
+  /* Desktop check */
+  .device-warning {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+  }
+
+  .device-warning .box {
+    max-width: 540px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+  }
+
+  .device-warning h2 {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .device-warning p {
+    color: var(--muted);
+  }
+
+  @media (hover: none), (pointer: coarse), (max-width: 900px) {
+    .app {
+      display: none !important;
+    }
+
+    .device-warning {
+      display: flex;
+    }
+  }
+
+  /* Debug panel */
+  .debug-panel {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 400;
+    background: var(--ink);
+    color: #fff;
+    justify-content: center;
+    gap: 0;
+    font-size: 12px;
+  }
+
+  .debug-panel.show {
+    display: flex;
+  }
+
+  .debug-panel span {
+    padding: 8px 14px;
+    color: #cfc7bd;
+    font-size: 11px;
+    align-self: center;
+  }
+
+  .debug-panel button {
+    background: none;
+    border: none;
+    color: #cfc7bd;
+    padding: 9px 18px;
+    font-size: 12px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+
+  .debug-panel button.active {
+    color: #fff;
+    border-bottom-color: var(--accent);
+    font-weight: 700;
+  }
+
+  .app {
+    min-height: 100vh;
+  }
+
+  /* Start page */
+  .start-screen {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: center;
+    gap: 48px;
+    padding: 64px 72px;
+  }
+
+  .start-copy {
+    max-width: 640px;
+  }
+
+  .brand-start {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 42px;
+    letter-spacing: 0.02em;
+  }
+
+  .brand-start small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  .start-copy h1 {
+    font-family: var(--serif);
+    font-size: 58px;
+    line-height: 1.05;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .start-copy p {
+    color: var(--muted);
+    max-width: 560px;
+    margin-bottom: 14px;
+    font-size: 16px;
+  }
+
+  .start-btn {
+    margin-top: 24px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .start-btn:hover {
+    background: #000;
+  }
+
+  .start-visual {
+    max-width: 430px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+    box-shadow: 0 28px 70px rgba(120, 81, 58, 0.18);
+    background: #fff;
+  }
+
+  .start-visual svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Topbar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    background: rgba(247, 244, 238, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+  }
+
+  .debug-on .topbar {
+    top: 35px;
+  }
+
+  .brand {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .brand small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: -2px;
+    font-weight: 500;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .cart-status {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .cart-status b {
+    color: var(--ink);
+  }
+
+  .checkout-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 11px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+  }
+
+  .checkout-btn:hover {
+    background: var(--accent-dark);
+  }
+
+  .checkout-btn:disabled {
+    background: #c9bcb0;
+    cursor: not-allowed;
+  }
+
+  /* Shop intro */
+  .shop-head {
+    padding: 56px 48px 18px;
+    text-align: center;
+  }
+
+  .shop-head .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .shop-head h2 {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .shop-head p {
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Product grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    padding: 34px 48px 76px;
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    min-height: 386px;
+  }
+
+  .card .img {
+    aspect-ratio: 1;
+    background: var(--soft);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card .img svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .body {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .info-area {
+    min-height: 86px;
+  }
+
+  .name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .design {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .price {
+    color: var(--price);
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 6px;
+  }
+
+  .action-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    gap: 12px;
+  }
+
+  .qty {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .qty button {
+    width: 30px;
+    height: 32px;
+    border: none;
+    background: #fff;
+    font-size: 17px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .qty button:hover {
+    background: #f2ede5;
+  }
+
+  .qty .count {
+    min-width: 30px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .add {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .add:hover {
+    background: var(--accent-dark);
+  }
+
+  /* Condition 1: No hover */
+  body.cond-no_hover .card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--line);
+  }
+
+  /* Condition 2: Hover control; information is visible; hover feedback only */
+  body.cond-hover_control .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    border-color: #d9cbbb;
+  }
+
+  /* Condition 3: Hover reveal; action buttons remain visible */
+  body.cond-hover_reveal .info-content {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.14s ease, visibility 0.14s ease;
+  }
+
+  body.cond-hover_reveal .card:hover .info-content,
+  body.cond-hover_reveal .card:focus-within .info-content {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  body.cond-hover_reveal .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    border-color: #d9cbbb;
+  }
+
+  body.cond-hover_reveal .info-placeholder {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.35;
+    padding-top: 4px;
+  }
+
+  body:not(.cond-hover_reveal) .info-placeholder {
+    display: none;
+  }
+
+  /* Survey overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(43, 38, 34, 0.55);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: auto;
+    padding: 48px 20px;
+  }
+
+  .overlay.open {
+    display: flex;
+  }
+
+  .sheet {
+    background: #fff;
+    border-radius: 18px;
+    max-width: 660px;
+    width: 100%;
+    padding: 40px 44px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.16);
+  }
+
+  .sheet h2 {
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .sub {
+    color: var(--muted);
+    margin-bottom: 26px;
+  }
+
+  .field {
+    margin-bottom: 26px;
+  }
+
+  .field label.group-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .scale-group-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 14px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .scale-item {
+    margin-bottom: 18px;
+  }
+
+  .scale-item p {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .likert {
+    display: flex;
+    gap: 6px;
+  }
+
+  .likert label {
+    flex: 1;
+    text-align: center;
+  }
+
+  .likert input {
+    display: none;
+  }
+
+  .likert label span {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 0;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .likert input:checked + span {
+    border-color: var(--accent);
+    background: #f6ede7;
+    color: var(--accent-dark);
+    font-weight: 700;
+  }
+
+  .likert-ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .opts button {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--ink);
+  }
+
+  .opts button.sel {
+    border-color: var(--accent);
+    background: #f6ede7;
+    color: var(--accent-dark);
+    font-weight: 700;
+  }
+
+  .field input[type="number"] {
+    width: 120px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  .submit {
+    width: 100%;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .submit:hover {
+    background: #000;
+  }
+
+  .done {
+    text-align: center;
+    padding: 30px 0;
+  }
+
+  .done h2 {
+    margin-bottom: 10px;
+  }
+
+  .done pre {
+    text-align: left;
+    background: #f7f4ee;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 12px;
+    overflow: auto;
+    margin-top: 18px;
+    max-height: 360px;
+  }
+
+  .download-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .download-row button {
+    flex: 1;
+  }
+</style>
+</head>
+
+<body class="locked cond-no_hover">
+
+<div class="device-warning">
+  <div class="box">
+    <h2>Please use a desktop or laptop device</h2>
+    <p>This study requires a mouse or trackpad because the experimental manipulation depends on hover behavior.</p>
+  </div>
+</div>
+
+<div class="debug-panel" id="debugPanel">
+  <span>Researcher preview</span>
+  <button data-cond="no_hover" onclick="setCondition('no_hover')">Group 1 · No hover</button>
+  <button data-cond="hover_control" onclick="setCondition('hover_control')">Group 2 · Hover control</button>
+  <button data-cond="hover_reveal" onclick="setCondition('hover_reveal')">Group 3 · Hover reveal</button>
+</div>
+
+<div class="app">
+  <section class="start-screen" id="startScreen">
+    <div class="start-copy">
+      <div class="brand-start">Maison&nbsp;Tavola<small>Artisan Placemats</small></div>
+      <h1>Browse placemats for your dining table.</h1>
+      <p>Imagine you are shopping online for placemats for your home dining table.</p>
+      <p>Please browse the collection as you normally would and add any placemats you would like to purchase to your cart. You may buy multiple units of the same design if you wish.</p>
+      <p>There is no required budget and no required number of items.</p>
+      <button class="start-btn" onclick="startShopping()">Start shopping</button>
+    </div>
+    <div class="start-visual" id="startVisual"></div>
+  </section>
+
+  <section id="shopScreen" style="display:none;">
+    <div class="topbar">
+      <div class="brand">Maison&nbsp;Tavola<small>Artisan Placemats</small></div>
+      <div class="topbar-right">
+        <span class="cart-status">Cart <b id="cartCount">0</b> · <span id="cartTotal">$0.00</span></span>
+        <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" disabled>Proceed to checkout →</button>
+      </div>
+    </div>
+
+    <div class="shop-head">
+      <div class="eyebrow">The Collection</div>
+      <h2>Browse the full range</h2>
+      <p>All placemats are priced at $28.00. Add any placemats you would like to purchase.</p>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </section>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+  function closeOverlayAndKeepCart() {
+  document.getElementById("overlay").classList.remove("open");
+  // No data is saved or cleared
+  logEvent("back_button_pressed", {});
+}
+/* =========================================================
+   1. CONDITION ASSIGNMENT
+   ========================================================= */
+
+const CONDITIONS = ["no_hover", "hover_control", "hover_reveal"];
+const urlParams = new URLSearchParams(window.location.search);
+const urlCondition = urlParams.get("condition");
+const debugMode = urlParams.get("debug") === "1";
+
+let condition = CONDITIONS.includes(urlCondition)
+  ? urlCondition
+  : CONDITIONS[Math.floor(Math.random() * CONDITIONS.length)];
+
+if (debugMode) {
+  document.getElementById("debugPanel").classList.add("show");
+  document.body.classList.add("debug-on");
+}
+
+function applyConditionClass() {
+  CONDITIONS.forEach(c => document.body.classList.remove("cond-" + c));
+  document.body.classList.add("cond-" + condition);
+
+  document.querySelectorAll("#debugPanel button").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.cond === condition);
+  });
+}
+
+function setCondition(c) {
+  condition = c;
+  applyConditionClass();
+  logEvent("condition_changed_debug", { condition });
+}
+
+applyConditionClass();
+
+/* =========================================================
+   2. PRODUCT STIMULI
+   8 families × 6 variants = 48 products
+   ========================================================= */
+
+const PRICE = 28;
+
+const families = [
+  {
+    family_id: "F1",
+    family_name: "Straw Loop Oval",
+    shape: "oval",
+    colors: [
+      ["Natural", "#d8bd8a", "#b89055", "#f0dfbc"],
+      ["Coral", "#e7a185", "#c8735b", "#f6d8c9"],
+      ["Chambray", "#8aa6bd", "#5f7f99", "#d7e4ec"],
+      ["Whitewash", "#eee7d8", "#cfc4b0", "#faf6ed"],
+      ["Sage", "#a6b89b", "#748767", "#e2eadb"],
+      ["Terracotta", "#c77a55", "#9b5638", "#f0c9b8"]
+    ],
+    motif: "loopOval"
+  },
+  {
+    family_id: "F2",
+    family_name: "Straw Loop Round",
+    shape: "round",
+    colors: [
+      ["Natural", "#d7bb83", "#a98248", "#f2dfb7"],
+      ["Delft Blue", "#507ca5", "#24527a", "#d9e6f0"],
+      ["Sand", "#dfcda9", "#b7a17b", "#f6eddc"],
+      ["Dusty Rose", "#d9a8a0", "#a66f69", "#f1d4cf"],
+      ["Olive", "#9aa57b", "#687348", "#e2e5ce"],
+      ["Charcoal", "#8f8c84", "#5c5850", "#dedbd2"]
+    ],
+    motif: "loopRound"
+  },
+  {
+    family_id: "F3",
+    family_name: "Rustic Ring Weave",
+    shape: "round",
+    colors: [
+      ["Natural Fiber", "#cba66b", "#8f6a3c", "#ead8b9"],
+      ["Honey Brown", "#bd8649", "#78491f", "#e8c795"],
+      ["Flax Beige", "#d8c7a3", "#a08d68", "#efe6d1"],
+      ["Driftwood Gray", "#aaa59b", "#777067", "#e1ded6"],
+      ["Moss Accent", "#a8a178", "#657348", "#e7e2bf"],
+      ["Chestnut", "#9a5c35", "#63351d", "#d5a077"]
+    ],
+    motif: "rusticRing"
+  },
+  {
+    family_id: "F4",
+    family_name: "Provence Rattan",
+    shape: "round",
+    colors: [
+      ["Golden Rattan", "#d6a85f", "#a87632", "#f0d198"],
+      ["Whitewash", "#eee6d7", "#cbbda9", "#faf5ea"],
+      ["Pale Oak", "#d2b98d", "#9b7b4d", "#ead9bb"],
+      ["Caramel", "#c6853e", "#85521d", "#e9b978"],
+      ["Gray Wash", "#aaa39a", "#70695f", "#ded8d0"],
+      ["Toasted Almond", "#c69b69", "#8d6237", "#e8cba5"]
+    ],
+    motif: "braidedRattan"
+  },
+  {
+    family_id: "F5",
+    family_name: "Garden Botanical",
+    shape: "rect",
+    colors: [
+      ["Basil", "#567a4b", "#88a978", "#f4efe5"],
+      ["Chambray", "#5f8aaa", "#9bb9cc", "#f4efe5"],
+      ["Pistachio", "#9aaa6b", "#c9d2a2", "#f4efe5"],
+      ["Mulberry", "#8c5270", "#c58aa6", "#f4efe5"],
+      ["Walnut", "#83624a", "#b89c7e", "#f4efe5"],
+      ["Ochre Moss", "#b68a42", "#74815b", "#f4efe5"]
+    ],
+    motif: "botanical"
+  },
+  {
+    family_id: "F6",
+    family_name: "Ornamental Lace",
+    shape: "round",
+    colors: [
+      ["Gold", "#c49a42", "#8d6b27", "#f4e7c3"],
+      ["Silver", "#bebebe", "#858585", "#eeeeee"],
+      ["Evergreen", "#315849", "#19362c", "#d7e3dd"],
+      ["Champagne", "#d9be82", "#a7894d", "#f6ebcf"],
+      ["Pewter", "#8d8b86", "#5e5b56", "#ddd9d0"],
+      ["Bronze", "#a46a3c", "#6b3f22", "#e1b486"]
+    ],
+    motif: "lace"
+  },
+  {
+    family_id: "F7",
+    family_name: "Seville Stripe",
+    shape: "rect",
+    colors: [
+      ["Green Cream", "#4f7e50", "#efe6d6", "#d8c9af"],
+      ["Navy Cream", "#1f4e73", "#efe6d6", "#c7d8e4"],
+      ["Coral Cream", "#d87561", "#efe6d6", "#f1c0b2"],
+      ["Mustard Cream", "#c39535", "#efe6d6", "#ecd59b"],
+      ["Chambray White", "#6f98b6", "#f7f3ea", "#d1e2ec"],
+      ["Sage Ivory", "#9aaa7f", "#f7f3ea", "#dfe7d4"]
+    ],
+    motif: "stripe"
+  },
+  {
+    family_id: "F8",
+    family_name: "Meadow Walk",
+    shape: "rect",
+    colors: [
+      ["Multicolor", "#b75f66", "#6e8b57", "#f4efe5"],
+      ["Blue Wildflower", "#557fa5", "#6e8b57", "#f4efe5"],
+      ["Blush Sage", "#d1969a", "#84996b", "#f4efe5"],
+      ["Yellow Cream", "#d6ae4d", "#78915d", "#f4efe5"],
+      ["Lavender Green", "#9876aa", "#6f915d", "#f4efe5"],
+      ["Vintage Rust", "#b56b46", "#657c61", "#f4efe5"]
+    ],
+    motif: "meadow"
+  }
+];
+
+const products = [];
+families.forEach(f => {
+  f.colors.forEach((colorSet, variantIndex) => {
+    const productNumber = products.length + 1;
+    products.push({
+      product_id: "P" + String(productNumber).padStart(2, "0"),
+      display_name: "Placemat",
+      design_label: "Design " + String(productNumber).padStart(2, "0"),
+      family_id: f.family_id,
+      family_name: f.family_name,
+      variant_name: colorSet[0],
+      shape: f.shape,
+      motif: f.motif,
+      colors: colorSet.slice(1),
+      original_index: productNumber
+    });
+  });
+});
+
+/* Balanced randomization:
+   Each block of 8 products contains one product from each family.
+*/
+function seededRandom(seedString) {
+  let seed = 0;
+  for (let i = 0; i < seedString.length; i++) {
+    seed = (seed * 31 + seedString.charCodeAt(i)) >>> 0;
+  }
+  return function() {
+    seed = (1664525 * seed + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+}
+
+const participantId = "pid_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+const rand = seededRandom(participantId);
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function balancedOrder(products) {
+  const byFamily = {};
+  products.forEach(p => {
+    if (!byFamily[p.family_id]) byFamily[p.family_id] = [];
+    byFamily[p.family_id].push(p);
+  });
+
+  Object.keys(byFamily).forEach(fid => {
+    byFamily[fid] = shuffle(byFamily[fid]);
+  });
+
+  const ordered = [];
+  for (let block = 0; block < 6; block++) {
+    const familyIds = shuffle(Object.keys(byFamily));
+    familyIds.forEach(fid => {
+      ordered.push(byFamily[fid][block]);
+    });
+  }
+
+  return ordered.map((p, i) => ({
+    ...p,
+    display_position: i + 1
+  }));
+}
+
+const orderedProducts = balancedOrder(products);
+
+/* =========================================================
+   3. SVG PRODUCT IMAGE GENERATION
+   In production, replace these SVGs with real AI-generated images.
+   ========================================================= */
+
+function svgProduct(p) {
+  const [c1, c2, c3] = p.colors;
+  const shape = p.shape;
+
+  const bg = "#faf8f4";
+  let matBase = "";
+  let motif = "";
+
+  if (shape === "round") {
+    matBase = `<circle cx="50" cy="50" r="38" fill="${c3}" stroke="${c2}" stroke-width="2"/>`;
+  } else if (shape === "oval") {
+    matBase = `<ellipse cx="50" cy="50" rx="42" ry="30" fill="${c3}" stroke="${c2}" stroke-width="2"/>`;
+  } else {
+    matBase = `<rect x="15" y="25" width="70" height="50" rx="6" fill="${c3}" stroke="${c2}" stroke-width="2"/>`;
+  }
+
+  if (p.motif === "loopOval") {
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      motif += `<ellipse cx="${50 + 36 * Math.cos(a)}" cy="${50 + 25 * Math.sin(a)}" rx="4" ry="2.5" fill="none" stroke="${c1}" stroke-width="1.8" transform="rotate(${i * 30} ${50 + 36 * Math.cos(a)} ${50 + 25 * Math.sin(a)})"/>`;
+    }
+    motif += `<ellipse cx="50" cy="50" rx="28" ry="18" fill="none" stroke="${c1}" stroke-width="2" opacity=".65"/>`;
+  }
+
+  if (p.motif === "loopRound") {
+    for (let r = 12; r <= 34; r += 7) {
+      motif += `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${r % 2 ? c1 : c2}" stroke-width="2" opacity=".8"/>`;
+    }
+  }
+
+  if (p.motif === "rusticRing") {
+    for (let i = 0; i < 18; i++) {
+      const a = (i / 18) * 360;
+      motif += `<path d="M50 14 Q55 22 50 30 Q45 22 50 14" fill="${i % 2 ? c1 : c2}" opacity=".75" transform="rotate(${a} 50 50)"/>`;
+    }
+    motif += `<circle cx="50" cy="50" r="18" fill="none" stroke="${c1}" stroke-width="5" opacity=".55"/>`;
+  }
+
+  if (p.motif === "braidedRattan") {
+    for (let r = 16; r <= 36; r += 6) {
+      motif += `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${c1}" stroke-width="3" stroke-dasharray="5 4" opacity=".75"/>`;
+    }
+  }
+
+  if (p.motif === "botanical") {
+    for (let i = 0; i < 7; i++) {
+      const x = 22 + i * 9;
+      motif += `<path d="M${x} 68 C${x + 8} 55, ${x - 5} 43, ${x + 6} 31" fill="none" stroke="${c1}" stroke-width="1.4" opacity=".9"/>`;
+      motif += `<ellipse cx="${x + 4}" cy="${43 + (i % 3) * 4}" rx="4" ry="7" fill="${c2}" opacity=".8" transform="rotate(${i * 18} ${x + 4} ${43 + (i % 3) * 4})"/>`;
+    }
+  }
+
+  if (p.motif === "lace") {
+    for (let i = 0; i < 12; i++) {
+      const a = i * 30;
+      motif += `<path d="M50 18 C58 32,58 42,50 50 C42 42,42 32,50 18Z" fill="${c1}" opacity=".58" transform="rotate(${a} 50 50)"/>`;
+    }
+    motif += `<circle cx="50" cy="50" r="16" fill="${c3}" stroke="${c1}" stroke-width="2"/>`;
+    motif += `<circle cx="50" cy="50" r="7" fill="${c1}" opacity=".75"/>`;
+  }
+
+  if (p.motif === "stripe") {
+    for (let i = 0; i < 8; i++) {
+      motif += `<rect x="${17 + i * 8}" y="25" width="4" height="50" fill="${i % 2 ? c1 : c2}" opacity=".9"/>`;
+    }
+  }
+
+  if (p.motif === "meadow") {
+    for (let i = 0; i < 9; i++) {
+      const x = 20 + (i % 5) * 12;
+      const y = 36 + Math.floor(i / 5) * 20;
+      motif += `<line x1="${x}" y1="${y + 12}" x2="${x + 3}" y2="${y}" stroke="${c1}" stroke-width="1.2"/>`;
+      motif += `<circle cx="${x + 3}" cy="${y}" r="3.2" fill="${i % 2 ? c1 : c2}" opacity=".85"/>`;
+      motif += `<ellipse cx="${x + 7}" cy="${y + 6}" rx="2.5" ry="5" fill="${c1}" opacity=".55"/>`;
+    }
+  }
+
+  return `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${p.design_label}">
+      <rect width="100" height="100" fill="${bg}"/>
+      <ellipse cx="50" cy="82" rx="33" ry="5" fill="#000" opacity=".07"/>
+      ${matBase}
+      ${motif}
+    </svg>
+  `;
+}
+
+/* =========================================================
+   4. STATE AND LOGGING
+   ========================================================= */
+
+const startTime = Date.now();
+let shoppingStartTime = null;
+
+const cart = {};
+const hoverStart = {};
+const hoverSummary = {};
+const viewSummary = {};
+
+const dataLog = {
+  participant_id: participantId,
+  condition_initial: condition,
+  events: [],
+  user_agent: navigator.userAgent,
+  screen_width: window.innerWidth,
+  screen_height: window.innerHeight
+};
+
+const behavior = {
+  max_scroll_y: 0,
+  max_scroll_ratio: 0,
+  scroll_events: 0,
+  reveal_count: 0
+};
+
+function nowMs() {
+  return Date.now() - startTime;
+}
+
+function logEvent(type, details = {}) {
+  dataLog.events.push({
+    t_ms: nowMs(),
+    type,
+    condition,
+    ...details
+  });
+}
+
+logEvent("page_loaded", { participant_id: participantId });
+
+/* =========================================================
+   5. RENDERING
+   ========================================================= */
+
+document.getElementById("startVisual").innerHTML = svgProduct(orderedProducts[4]);
+
+function renderGrid() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  orderedProducts.forEach((p, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.tabIndex = 0;
+    card.dataset.productId = p.product_id;
+    card.dataset.position = p.display_position;
+    card.dataset.familyId = p.family_id;
+
+    card.innerHTML = `
+      <div class="img">${svgProduct(p)}</div>
+      <div class="body">
+        <div class="info-area">
+          <div class="info-placeholder">Hover to view product details</div>
+          <div class="info-content">
+            <div class="name">${p.display_name}</div>
+            <div class="design">${p.design_label}</div>
+            <div class="price">$${PRICE.toFixed(2)}</div>
+          </div>
+        </div>
+        <div class="action-area">
+          <div class="qty">
+            <button type="button" aria-label="Decrease quantity" onclick="changeQty('${p.product_id}', -1)">−</button>
+            <span class="count" id="count_${p.product_id}">0</span>
+            <button type="button" aria-label="Increase quantity" onclick="changeQty('${p.product_id}', 1)">+</button>
+          </div>
+          <button class="add" type="button" onclick="changeQty('${p.product_id}', 1)">Add</button>
+        </div>
+      </div>
+    `;
+
+    attachHoverLogging(card, p);
+    grid.appendChild(card);
+  });
+
+  setupViewObserver();
+}
+
+function attachHoverLogging(card, product) {
+  card.addEventListener("mouseenter", () => {
+    hoverStart[product.product_id] = Date.now();
+
+    if (!hoverSummary[product.product_id]) {
+      hoverSummary[product.product_id] = {
+        product_id: product.product_id,
+        display_position: product.display_position,
+        family_id: product.family_id,
+        hover_count: 0,
+        hover_ms: 0,
+        reveal_count: 0
+      };
+    }
+
+    hoverSummary[product.product_id].hover_count += 1;
+
+    if (condition === "hover_reveal") {
+      hoverSummary[product.product_id].reveal_count += 1;
+      behavior.reveal_count += 1;
+      logEvent("reveal_start", {
+        product_id: product.product_id,
+        display_position: product.display_position,
+        family_id: product.family_id
+      });
+    } else {
+      logEvent("hover_start", {
+        product_id: product.product_id,
+        display_position: product.display_position,
+        family_id: product.family_id
+      });
+    }
+  });
+
+  card.addEventListener("mouseleave", () => {
+    const start = hoverStart[product.product_id];
+    if (start) {
+      const duration = Date.now() - start;
+      hoverSummary[product.product_id].hover_ms += duration;
+      delete hoverStart[product.product_id];
+
+      logEvent("hover_end", {
+        product_id: product.product_id,
+        display_position: product.display_position,
+        family_id: product.family_id,
+        hover_duration_ms: duration,
+        information_revealed: condition === "hover_reveal"
+      });
+    }
+  });
+}
+
+let observer = null;
+
+function setupViewObserver() {
+  if (observer) observer.disconnect();
+
+  observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const productId = entry.target.dataset.productId;
+        const product = orderedProducts.find(p => p.product_id === productId);
+
+        if (!viewSummary[productId]) {
+          viewSummary[productId] = {
+            product_id: productId,
+            display_position: product.display_position,
+            family_id: product.family_id,
+            first_view_ms: nowMs(),
+            view_count: 0
+          };
+        }
+
+        viewSummary[productId].view_count += 1;
+
+        logEvent("product_view", {
+          product_id: productId,
+          display_position: product.display_position,
+          family_id: product.family_id,
+          intersection_ratio: Number(entry.intersectionRatio.toFixed(3))
+        });
+      }
+    });
+  }, { threshold: 0.55 });
+
+  document.querySelectorAll(".card").forEach(card => observer.observe(card));
+}
+
+/* =========================================================
+   6. CART
+   ========================================================= */
+
+function productById(productId) {
+  return orderedProducts.find(p => p.product_id === productId);
+}
+
+function changeQty(productId, delta) {
+  const product = productById(productId);
+  const oldQty = cart[productId] || 0;
+  const newQty = Math.max(0, oldQty + delta);
+
+  if (newQty === 0) {
+    delete cart[productId];
+  } else {
+    cart[productId] = newQty;
+  }
+
+  const countEl = document.getElementById("count_" + productId);
+  if (countEl) countEl.textContent = cart[productId] || 0;
+
+  updateCartUI();
+
+  logEvent("cart_update", {
+    product_id: productId,
+    display_position: product.display_position,
+    family_id: product.family_id,
+    delta,
+    old_qty: oldQty,
+    new_qty: newQty,
+    total_items: getTotalItems(),
+    unique_designs: Object.keys(cart).length
+  });
+}
+
+function getTotalItems() {
+  return Object.values(cart).reduce((a, b) => a + b, 0);
+}
+
+function updateCartUI() {
+  const total = getTotalItems();
+  document.getElementById("cartCount").textContent = total;
+  document.getElementById("cartTotal").textContent = "$" + (total * PRICE).toFixed(2);
+  document.getElementById("checkoutBtn").disabled = total === 0;
+}
+
+/* =========================================================
+   7. SCROLL LOGGING
+   ========================================================= */
+
+let lastScrollLog = 0;
+
+window.addEventListener("scroll", () => {
+  if (!shoppingStartTime) return;
+
+  behavior.scroll_events += 1;
+  behavior.max_scroll_y = Math.max(behavior.max_scroll_y, Math.round(window.scrollY));
+
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  behavior.max_scroll_ratio = docHeight > 0
+    ? Math.max(behavior.max_scroll_ratio, Number((window.scrollY / docHeight).toFixed(4)))
+    : 0;
+
+  if (Date.now() - lastScrollLog > 600) {
+    logEvent("scroll", {
+      scroll_y: Math.round(window.scrollY),
+      scroll_ratio: behavior.max_scroll_ratio
+    });
+    lastScrollLog = Date.now();
+  }
+}, { passive: true });
+
+/* =========================================================
+   8. START SHOPPING
+   ========================================================= */
+
+function startShopping() {
+  shoppingStartTime = Date.now();
+  document.body.classList.remove("locked");
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("shopScreen").style.display = "block";
+  renderGrid();
+  updateCartUI();
+  logEvent("shopping_started", {
+    participant_id: participantId,
+    assigned_condition: condition
+  });
+  window.scrollTo(0, 0);
+}
+
+/* =========================================================
+   9. SURVEY ITEMS
+   ========================================================= */
+
+const survey = {
+  scale: {},
+  mcheck: {},
+  gender: null,
+  age: null
+};
+
+const scaleItems = [
+  {
+    key: "explore_1",
+    dim: "explorative_mindset",
+    text: "Browsing this store made me feel curious about what I might find."
+  },
+  {
+    key: "explore_2",
+    dim: "explorative_mindset",
+    text: "The shopping experience felt like a process of discovery."
+  },
+  {
+    key: "explore_3",
+    dim: "explorative_mindset",
+    text: "I felt motivated to keep looking through the products."
+  },
+  {
+    key: "explore_4",
+    dim: "explorative_mindset",
+    text: "I felt like I was actively exploring the collection."
+  },
+  {
+    key: "agency_1",
+    dim: "information_agency",
+    text: "I felt in control of how I viewed product information."
+  },
+  {
+    key: "agency_2",
+    dim: "information_agency",
+    text: "It was up to me to decide when to view product information."
+  },
+  {
+    key: "agency_3",
+    dim: "information_agency",
+    text: "I felt that I was actively deciding what information to look at."
+  }
+];
+
+const manipulationItems = [
+  {
+    key: "need_hover",
+    text: "I had to hover over a product to see its name and price."
+  },
+  {
+    key: "all_visible",
+    text: "Product names and prices were visible without any extra action."
+  },
+  {
+    key: "hover_feedback",
+    text: "The products visually responded when I moved my cursor over them."
+  }
+];
+
+function checkout() {
+  const overlay = document.getElementById("overlay");
+  const sheet = document.getElementById("sheet");
+
+  const total = getTotalItems();
+
+  let scaleHtml = "";
+  let lastDim = null;
+
+  const dimTitles = {
+    explorative_mindset: "Shopping experience",
+    information_agency: "Viewing product information"
+  };
+
+  scaleItems.forEach((item, i) => {
+    if (item.dim !== lastDim) {
+      scaleHtml += `<div class="scale-group-label">${dimTitles[item.dim]}</div>`;
+      lastDim = item.dim;
+    }
+
+    let options = "";
+    for (let v = 1; v <= 7; v++) {
+      options += `
+        <label>
+          <input type="radio" name="s_${item.key}" value="${v}" onchange="survey.scale['${item.key}']=${v}">
+          <span>${v}</span>
+        </label>
+      `;
+    }
+
+    scaleHtml += `
+      <div class="scale-item">
+        <p>${item.text}</p>
+        <div class="likert">${options}</div>
+        <div class="likert-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+      </div>
+    `;
+  });
+
+  let mcheckHtml = `<div class="scale-group-label">Thinking back on the website</div>`;
+
+  manipulationItems.forEach(item => {
+    let options = "";
+    for (let v = 1; v <= 7; v++) {
+      options += `
+        <label>
+          <input type="radio" name="m_${item.key}" value="${v}" onchange="survey.mcheck['${item.key}']=${v}">
+          <span>${v}</span>
+        </label>
+      `;
+    }
+
+    mcheckHtml += `
+      <div class="scale-item">
+        <p>${item.text}</p>
+        <div class="likert">${options}</div>
+        <div class="likert-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+      </div>
+    `;
+  });
+
+  sheet.innerHTML = `
+    <h2>Before you go</h2>
+    <p class="sub">You added ${total} placemat${total !== 1 ? "s" : ""} to your cart. Please answer a few questions to complete your visit.</p>
+
+    <div class="field">
+      ${scaleHtml}
+    </div>
+
+    <div class="field">
+      ${mcheckHtml}
+    </div>
+
+    <div class="field">
+      <label class="group-title">What is your gender?</label>
+      <div class="opts">
+        <button type="button" onclick="pickGender('Female', this)">Female</button>
+        <button type="button" onclick="pickGender('Male', this)">Male</button>
+        <button type="button" onclick="pickGender('Non-binary', this)">Non-binary</button>
+        <button type="button" onclick="pickGender('Prefer not to say', this)">Prefer not to say</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="group-title">What is your age?</label>
+      <input type="number" min="18" max="99" id="ageInput" placeholder="Years" oninput="survey.age=this.value">
+    </div>
+
+    <button class="submit" type="button" onclick="submitSurvey()">Complete visit</button>
+    <button class="submit back-btn" type="button" onclick="closeOverlayAndKeepCart()">← Back to shopping</button>
+  `;
+
+  overlay.classList.add("open");
+  logEvent("checkout_opened", { total_items: total });
+}
+
+function pickGender(value, btn) {
+  survey.gender = value;
+  btn.parentElement.querySelectorAll("button").forEach(b => b.classList.remove("sel"));
+  btn.classList.add("sel");
+}
+
+/* =========================================================
+   10. DATA COMPUTATION AND EXPORT
+   ========================================================= */
+
+function mean(arr) {
+  return arr.length ? Number((arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2)) : null;
+}
+
+function computeData() {
+  const selected = Object.entries(cart).map(([productId, qty]) => {
+    const p = productById(productId);
+    return {
+      product_id: productId,
+      quantity: qty,
+      display_position: p.display_position,
+      original_index: p.original_index,
+      family_id: p.family_id,
+      family_name: p.family_name,
+      variant_name: p.variant_name,
+      price: PRICE
+    };
+  }).sort((a, b) => a.display_position - b.display_position);
+
+  const totalItems = getTotalItems();
+  const uniqueDesigns = selected.length;
+  const uniqueFamilies = new Set(selected.map(x => x.family_id)).size;
+  const repeatedUnits = totalItems - uniqueDesigns;
+
+  const selectedPositionsUnitWeighted = [];
+  selected.forEach(x => {
+    for (let i = 0; i < x.quantity; i++) selectedPositionsUnitWeighted.push(x.display_position);
+  });
+
+  const selectedPositionsUnique = selected.map(x => x.display_position);
+
+  const dimVals = {};
+  scaleItems.forEach(item => {
+    if (!dimVals[item.dim]) dimVals[item.dim] = [];
+    if (survey.scale[item.key] != null) dimVals[item.dim].push(Number(survey.scale[item.key]));
+  });
+
+  const totalHoverMs = Object.values(hoverSummary).reduce((s, h) => s + h.hover_ms, 0);
+  const totalHoverCount = Object.values(hoverSummary).reduce((s, h) => s + h.hover_count, 0);
+  const uniqueHoveredProducts = Object.keys(hoverSummary).length;
+  const uniqueViewedProducts = Object.keys(viewSummary).length;
+
+  return {
+    participant_id: participantId,
+    condition,
+
+    DV_total_items: totalItems,
+    DV_unique_designs: uniqueDesigns,
+    DV_unique_families: uniqueFamilies,
+    DV_repeated_units: repeatedUnits,
+    DV_max_selected_display_position: selectedPositionsUnique.length ? Math.max(...selectedPositionsUnique) : null,
+    DV_mean_selected_display_position_unique: selectedPositionsUnique.length ? mean(selectedPositionsUnique) : null,
+    DV_mean_selected_display_position_unit_weighted: selectedPositionsUnitWeighted.length ? mean(selectedPositionsUnitWeighted) : null,
+
+    mediator_explorative_mindset: mean(dimVals.explorative_mindset || []),
+    mediator_information_agency: mean(dimVals.information_agency || []),
+
+    behavior_scroll_px: behavior.max_scroll_y,
+    behavior_scroll_ratio: behavior.max_scroll_ratio,
+    behavior_scroll_events: behavior.scroll_events,
+    behavior_unique_product_views: uniqueViewedProducts,
+    behavior_unique_hovered_products: uniqueHoveredProducts,
+    behavior_total_hover_count: totalHoverCount,
+    behavior_total_hover_ms: Math.round(totalHoverMs),
+    behavior_reveal_count: behavior.reveal_count,
+
+    mcheck_need_hover: survey.mcheck.need_hover ?? null,
+    mcheck_all_visible: survey.mcheck.all_visible ?? null,
+    mcheck_hover_feedback: survey.mcheck.hover_feedback ?? null,
+
+    demo_gender: survey.gender,
+    demo_age: survey.age ? Number(survey.age) : null,
+
+    selected_products: selected,
+    cart_raw: { ...cart },
+    scale_responses: { ...survey.scale },
+    mcheck_responses: { ...survey.mcheck },
+    hover_summary: hoverSummary,
+    view_summary: viewSummary,
+
+    shopping_time_sec: shoppingStartTime ? Math.round((Date.now() - shoppingStartTime) / 1000) : null,
+    total_time_sec: Math.round((Date.now() - startTime) / 1000),
+    event_count: dataLog.events.length,
+    finished_at_iso: new Date().toISOString(),
+
+    product_order: orderedProducts.map(p => ({
+      product_id: p.product_id,
+      display_position: p.display_position,
+      family_id: p.family_id,
+      family_name: p.family_name,
+      variant_name: p.variant_name
+    })),
+
+    raw_events: dataLog.events
+  };
+}
+function sendToGoogleSheet(data) {
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxvJtV0M5o9F1Co0iKsschTGl3bdIstYft6ZjJrtzMVyoPBXhSdsS4qK2g6mq1Qov8kzw/exec";
+  fetch(scriptURL, {
+    method: "POST",
+    mode: "no-cors", // allows cross-origin, but no response
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).catch(e => console.warn("Google Sheet log failed", e));
+}
+function submitSurvey() {
+  const d = computeData();
+  const sheetData = { ...d };
+const fieldsToJSON = [
+  'selected_products', 'cart_raw', 'scale_responses', 'mcheck_responses',
+  'hover_summary', 'view_summary', 'product_order', 'raw_events'
+];
+fieldsToJSON.forEach(field => {
+  if (sheetData[field]) sheetData[field] = JSON.stringify(sheetData[field]);
+});
+sendToGoogleSheet(sheetData);
+  
+  window._lastData = d;
+
+  logEvent("survey_submitted", {
+    total_items: d.DV_total_items,
+    unique_designs: d.DV_unique_designs,
+    unique_families: d.DV_unique_families
+  });
+  document.getElementById("sheet").innerHTML = `
+    <div class="done">
+      <h2>Thank you</h2>
+      <p class="sub">Your responses have been recorded.</p>
+      <pre>${escapeHtml(JSON.stringify(d, null, 2))}</pre>
+      <div class="download-row">
+        <button class="submit" type="button" onclick="downloadJSON()">Download JSON</button>
+        <button class="submit" type="button" onclick="downloadCSV()">Download CSV</button>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[m]));
+}
+
+function flattenForCSV(d) {
+  return {
+    participant_id: d.participant_id,
+    condition: d.condition,
+    DV_total_items: d.DV_total_items,
+    DV_unique_designs: d.DV_unique_designs,
+    DV_unique_families: d.DV_unique_families,
+    DV_repeated_units: d.DV_repeated_units,
+    DV_max_selected_display_position: d.DV_max_selected_display_position,
+    DV_mean_selected_display_position_unique: d.DV_mean_selected_display_position_unique,
+    DV_mean_selected_display_position_unit_weighted: d.DV_mean_selected_display_position_unit_weighted,
+    mediator_explorative_mindset: d.mediator_explorative_mindset,
+    mediator_information_agency: d.mediator_information_agency,
+    behavior_scroll_px: d.behavior_scroll_px,
+    behavior_scroll_ratio: d.behavior_scroll_ratio,
+    behavior_unique_product_views: d.behavior_unique_product_views,
+    behavior_unique_hovered_products: d.behavior_unique_hovered_products,
+    behavior_total_hover_count: d.behavior_total_hover_count,
+    behavior_total_hover_ms: d.behavior_total_hover_ms,
+    behavior_reveal_count: d.behavior_reveal_count,
+    mcheck_need_hover: d.mcheck_need_hover,
+    mcheck_all_visible: d.mcheck_all_visible,
+    mcheck_hover_feedback: d.mcheck_hover_feedback,
+    demo_gender: d.demo_gender,
+    demo_age: d.demo_age,
+    shopping_time_sec: d.shopping_time_sec,
+    total_time_sec: d.total_time_sec,
+    selected_product_ids: d.selected_products.map(x => x.product_id).join("|"),
+    selected_positions: d.selected_products.map(x => x.display_position).join("|"),
+    selected_quantities: d.selected_products.map(x => x.quantity).join("|"),
+    selected_families: d.selected_products.map(x => x.family_id).join("|"),
+    finished_at_iso: d.finished_at_iso
+  };
+}
+
+function downloadJSON() {
+  const blob = new Blob([JSON.stringify(window._lastData, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "reveal_mode_session.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function downloadCSV() {
+  const flat = flattenForCSV(window._lastData);
+  const headers = Object.keys(flat);
+  const values = headers.map(h => `"${String(flat[h] ?? "").replace(/"/g, '""')}"`);
+  const csv = headers.join(",") + "\n" + values.join(",");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "reveal_mode_summary.csv";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
