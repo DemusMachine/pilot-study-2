@@ -692,8 +692,120 @@
   .card[data-product-id="P19"] .img{
     background-color: #f0f1ec;
   }
+/* Carousel styles for no-hover condition */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--soft);
+}
 
+.carousel-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(43, 38, 34, 0.7);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  padding: 0;
+  backdrop-filter: blur(2px);
+}
+
+.carousel-btn:hover {
+  background: rgba(43, 38, 34, 0.9);
+}
+
+.carousel-btn.prev {
+  left: 8px;
+}
+
+.carousel-btn.next {
+  right: 8px;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(2px);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(43, 38, 34, 0.3);
+  transition: background 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.carousel-dot.active {
+  background: var(--accent);
+  transform: scale(1.25);
+}
+.carousel-btn,
+.carousel-dots {
+  opacity: 0;
+  pointer-events: none;          /* Prevents accidental clicks while hidden */
+  transition: opacity 0.3s ease; /* Smooth fade in/out */
+}
+
+/* Show controls only when hovering over the product card */
+.card:hover .carousel-btn,
+.card:hover .carousel-dots {
+  opacity: 1;
+  pointer-events: auto;          /* Restores clickability */
+}
 </style>
 </head>
 
@@ -1110,7 +1222,7 @@ logEvent("page_loaded", { participant_id: participantId });
    5. RENDERING
    ========================================================= */
 
-document.getElementById("startVisual").innerHTML = svgProduct(orderedProducts[4]);
+document.getElementById("startVisual").innerHTML = svgProduct(products.find(p => p.product_id === "P36"));
 
 function renderGrid() {
   const grid = document.getElementById("grid");
@@ -1127,12 +1239,27 @@ function renderGrid() {
     card.innerHTML = `
       <div class="img">
         ${condition === 'no_hover' 
-          ? `<img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:contain;">` 
-          : `<div style="position:relative; width:100%; height:100%;">
-              <img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:contain;">
-              <img class="hover-img" src="images-hover/${p.product_id}.jpg" alt="${p.display_name}">
-            </div>`
-        }
+  ? `<div class="carousel-container" data-product-id="${p.product_id}" data-current="0">
+      <div class="carousel-track">
+        <div class="carousel-slide active">
+          <img src="images/${p.product_id}.jpg" alt="${p.display_name}">
+        </div>
+        <div class="carousel-slide">
+          <img src="images-hover/${p.product_id}.jpg" alt="${p.display_name} - alternate view">
+        </div>
+      </div>
+      <button class="carousel-btn prev" type="button" aria-label="Previous" onclick="event.stopPropagation(); changeSlide(this, -1)">‹</button>
+      <button class="carousel-btn next" type="button" aria-label="Next" onclick="event.stopPropagation(); changeSlide(this, 1)">›</button>
+      <div class="carousel-dots">
+        <span class="carousel-dot active" data-index="0" role="button" tabindex="0" onclick="event.stopPropagation(); goToSlide(this.closest('.carousel-container'), 0)"></span>
+        <span class="carousel-dot" data-index="1" role="button" tabindex="0" onclick="event.stopPropagation(); goToSlide(this.closest('.carousel-container'), 1)"></span>
+      </div>
+    </div>` 
+  : `<div style="position:relative; width:100%; height:100%;">
+      <img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:contain;">
+      <img class="hover-img" src="images-hover/${p.product_id}.jpg" alt="${p.display_name}">
+    </div>`
+}
       </div>
       <div class="body">
         <div class="info-area">
@@ -1766,6 +1893,34 @@ function downloadCSV() {
   a.click();
   URL.revokeObjectURL(a.href);
 }
+// --- Carousel functions for no-hover condition ---
+window.changeSlide = function(btn, direction) {
+  const container = btn.closest('.carousel-container');
+  if (!container) return;
+  const slides = container.querySelectorAll('.carousel-slide');
+  const dots = container.querySelectorAll('.carousel-dot');
+  let current = parseInt(container.dataset.current) || 0;
+  let next = current + direction;
+  
+  if (next < 0) next = slides.length - 1;
+  if (next >= slides.length) next = 0;
+  
+  goToSlide(container, next);
+};
+
+window.goToSlide = function(container, index) {
+  if (!container) return;
+  const slides = container.querySelectorAll('.carousel-slide');
+  const dots = container.querySelectorAll('.carousel-dot');
+  
+  slides.forEach((slide, i) => {
+    slide.classList.toggle('active', i === index);
+  });
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+  container.dataset.current = index;
+};
 </script>
 </body>
 </html>
