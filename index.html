@@ -1452,7 +1452,7 @@ function checkout() {
   sheet.innerHTML = `
     <h2>Before you go</h2>
     <p class="sub">You added ${total} placemat${total !== 1 ? "s" : ""} to your cart. Please answer a few questions to complete your visit.</p>
-
+    <div id="formError" style="color: #a23c2e; background: #fbe9e7; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: none; font-weight: 500;"></div>
     <div class="field">
       ${scaleHtml}
     </div>
@@ -1602,6 +1602,56 @@ function sendToGoogleSheet(data) {
   }).catch(e => console.warn("Google Sheet log failed", e));
 }
 function submitSurvey() {
+const errorDiv = document.getElementById('formError');
+
+    // Clear any previous error
+    if (errorDiv) errorDiv.style.display = 'none';
+
+    // 1. Check main survey scales
+    for (const item of scaleItems) {
+      if (survey.scale[item.key] == null || survey.scale[item.key] === '') {
+        if (errorDiv) {
+          errorDiv.textContent = 'Please answer all questions about your shopping experience before submitting.';
+          errorDiv.style.display = 'block';
+          errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+    }
+
+    // 2. Check manipulation checks
+    for (const item of manipulationItems) {
+      if (survey.mcheck[item.key] == null || survey.mcheck[item.key] === '') {
+        if (errorDiv) {
+          errorDiv.textContent = 'Please answer all questions about the website before submitting.';
+          errorDiv.style.display = 'block';
+          errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+    }
+
+    // 3. Check gender
+    if (!survey.gender) {
+      if (errorDiv) {
+        errorDiv.textContent = 'Please select your gender.';
+        errorDiv.style.display = 'block';
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    // 4. Check age
+    const ageInput = document.getElementById('ageInput');
+    const ageVal = ageInput ? parseInt(ageInput.value) : null;
+    if (!ageVal || ageVal < 18 || ageVal > 99) {
+      if (errorDiv) {
+        errorDiv.textContent = 'Please enter a valid age (18 to 99).';
+        errorDiv.style.display = 'block';
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
   const d = computeData();
   const sheetData = { ...d };
 const fieldsToJSON = [
