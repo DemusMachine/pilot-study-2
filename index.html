@@ -136,7 +136,7 @@
     grid-template-columns: 1.05fr 0.95fr;
     align-items: center;
     gap: 48px;
-    padding: 64px 72px;
+    padding: 64px 288px;
   }
 
   .start-copy {
@@ -785,7 +785,7 @@ const families = [
   {
     family_id: "F1",
     family_name: "Straw Loop Oval",
-    description: "Very nice 1",
+    description: "Elegance, woven.",
     shape: "oval",
     colors: [
       ["Natural", "#d8bd8a", "#b89055", "#f0dfbc"],
@@ -800,7 +800,7 @@ const families = [
   {
     family_id: "F2",
     family_name: "Straw Loop Round",
-    description: "Very nice 2",
+    description: "Art for the table.",
     shape: "round",
     colors: [
       ["Natural", "#d7bb83", "#a98248", "#f2dfb7"],
@@ -815,7 +815,7 @@ const families = [
   {
     family_id: "F3",
     family_name: "Rustic Ring Weave",
-    description: "Very nice 3",
+    description: "Dine in luxury.",
     shape: "round",
     colors: [
       ["Natural Fiber", "#cba66b", "#8f6a3c", "#ead8b9"],
@@ -830,7 +830,7 @@ const families = [
   {
     family_id: "F4",
     family_name: "Provence Rattan",
-    description: "Very nice 4",
+    description: "Timeless tablescapes.",
     shape: "round",
     colors: [
       ["Golden Rattan", "#d6a85f", "#a87632", "#f0d198"],
@@ -845,7 +845,7 @@ const families = [
   {
     family_id: "F5",
     family_name: "Garden Botanical",
-    description: "Very nice 5",
+    description: "Simply refined.",
     shape: "rect",
     colors: [
       ["Basil", "#567a4b", "#88a978", "#f4efe5"],
@@ -861,7 +861,7 @@ const families = [
     family_id: "F6",
     family_name: "Ornamental Lace",
     shape: "round",
-    description: "Very nice 6",
+    description: "Framed in perfection.",
     colors: [
       ["Gold", "#c49a42", "#8d6b27", "#f4e7c3"],
       ["Silver", "#bebebe", "#858585", "#eeeeee"],
@@ -871,36 +871,6 @@ const families = [
       ["Bronze", "#a46a3c", "#6b3f22", "#e1b486"]
     ],
     motif: "lace"
-  },
-  {
-    family_id: "F7",
-    family_name: "Seville Stripe",
-    description: "Very nice 7",
-    shape: "rect",
-    colors: [
-      ["Green Cream", "#4f7e50", "#efe6d6", "#d8c9af"],
-      ["Navy Cream", "#1f4e73", "#efe6d6", "#c7d8e4"],
-      ["Coral Cream", "#d87561", "#efe6d6", "#f1c0b2"],
-      ["Mustard Cream", "#c39535", "#efe6d6", "#ecd59b"],
-      ["Chambray White", "#6f98b6", "#f7f3ea", "#d1e2ec"],
-      ["Sage Ivory", "#9aaa7f", "#f7f3ea", "#dfe7d4"]
-    ],
-    motif: "stripe"
-  },
-  {
-    family_id: "F8",
-    description: "Very nice 8",
-    family_name: "Meadow Walk",
-    shape: "rect",
-    colors: [
-      ["Multicolor", "#b75f66", "#6e8b57", "#f4efe5"],
-      ["Blue Wildflower", "#557fa5", "#6e8b57", "#f4efe5"],
-      ["Blush Sage", "#d1969a", "#84996b", "#f4efe5"],
-      ["Yellow Cream", "#d6ae4d", "#78915d", "#f4efe5"],
-      ["Lavender Green", "#9876aa", "#6f915d", "#f4efe5"],
-      ["Vintage Rust", "#b56b46", "#657c61", "#f4efe5"]
-    ],
-    motif: "meadow"
   }
 ];
 const descriptions =[];
@@ -1133,10 +1103,10 @@ function renderGrid() {
     card.innerHTML = `
       <div class="img">
         ${condition === 'no_hover' 
-          ? `<img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:cover;">` 
+          ? `<img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:contain;">` 
           : `<div style="position:relative; width:100%; height:100%;">
-              ${svgProduct(p)}
-              <img class="hover-img" src="images/${p.product_id}.jpg" alt="${p.display_name}">
+              <img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:contain;">
+              <img class="hover-img" src="images-hover/${p.product_id}.jpg" alt="${p.display_name}">
             </div>`
         }
       </div>
