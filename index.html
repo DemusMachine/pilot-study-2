@@ -722,7 +722,7 @@
     <div class="shop-head">
       <div class="eyebrow">The Collection</div>
       <h2>Browse the full range</h2>
-      <p>All placemats are priced at $28.00. Add any placemats you would like to purchase.</p>
+      <p>All placemats are priced at $15.00. Add any placemats you would like to purchase.</p>
     </div>
 
     <div class="grid" id="grid"></div>
@@ -747,6 +747,10 @@ const CONDITIONS = ["no_hover", "hover_control", "hover_reveal"];
 const urlParams = new URLSearchParams(window.location.search);
 const urlCondition = urlParams.get("condition");
 const debugMode = urlParams.get("debug") === "1";
+const prolificPid = urlParams.get("prolific_pid") || null;
+const studyId = urlParams.get("study_id") || null;
+const sessionId = urlParams.get("session_id") || null;
+const PROLIFIC_COMPLETION_URL = "https://app.prolific.co/submissions/complete?cc=CLGD90LD";
 
 let condition = CONDITIONS.includes(urlCondition)
   ? urlCondition
@@ -779,7 +783,7 @@ applyConditionClass();
    8 families × 6 variants = 48 products
    ========================================================= */
 
-const PRICE = 28;
+const PRICE = 15;
 
 const families = [
   {
@@ -1055,6 +1059,9 @@ const viewSummary = {};
 const dataLog = {
   participant_id: participantId,
   condition_initial: condition,
+  prolific_pid: prolificPid,
+  study_id: studyId,
+  session_id: sessionId,
   events: [],
   user_agent: navigator.userAgent,
   screen_width: window.innerWidth,
@@ -1532,7 +1539,9 @@ function computeData() {
   return {
     participant_id: participantId,
     condition,
-
+    prolific_pid: prolificPid,
+    study_id: studyId,
+    session_id: sessionId,
     DV_total_items: totalItems,
     DV_unique_designs: uniqueDesigns,
     DV_unique_families: uniqueFamilies,
@@ -1615,14 +1624,15 @@ sendToGoogleSheet(sheetData);
     <div class="done">
       <h2>Thank you</h2>
       <p class="sub">Your responses have been recorded.</p>
-      <pre>${escapeHtml(JSON.stringify(d, null, 2))}</pre>
-      <div class="download-row">
-        <button class="submit" type="button" onclick="downloadJSON()">Download JSON</button>
-        <button class="submit" type="button" onclick="downloadCSV()">Download CSV</button>
-      </div>
+      <a href="${PROLIFIC_COMPLETION_URL}" target="_blank" class="submit" style="display:inline-block; text-decoration:none; background:var(--accent); color:#fff; padding:14px 28px; border-radius:8px; font-weight:700;">
+        Return to Prolific</a>
     </div>
   `;
 }
+/*<div class="download-row">
+        <button class="submit" type="button" onclick="downloadJSON()">Download JSON</button>
+        <button class="submit" type="button" onclick="downloadCSV()">Download CSV</button>
+      </div>*/
 
 function escapeHtml(str) {
   return str.replace(/[&<>"']/g, m => ({
