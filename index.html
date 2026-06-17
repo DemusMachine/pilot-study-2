@@ -874,13 +874,10 @@
 const CONDITIONS = ["no_hover", "hover_control", "hover_reveal"];
 const urlParams = new URLSearchParams(window.location.search);
 const urlCondition = urlParams.get("condition");
-  /*const prolificPid = urlParams.get("PROLIFIC_PID") || null;
-const studyId = urlParams.get("STUDY_ID") || null;
-const sessionId = urlParams.get("SESSION_ID") || null;*/
 const debugMode = urlParams.get("debug") === "1";
-const prolificPid = getParam("PROLIFIC_PID") || null;
-const studyId = getParam("STUDY_ID") || null;
-const sessionId = getParam("SESSION_ID") || null;
+const prolificPid = urlParams.get("PROLIFIC_PID") || null;
+const studyId = urlParams.get("STUDY_ID") || null;
+const sessionId = urlParams.get("SESSION_ID") || null;
 const PROLIFIC_COMPLETION_URL = "https://app.prolific.co/submissions/complete?cc=CLGD90LD";
 
 let condition = CONDITIONS.includes(urlCondition)
