@@ -1685,16 +1685,21 @@ function computeData() {
     prolific_pid: prolificPid,
     study_id: studyId,
     session_id: sessionId,
+    
+    explore_1: survey.scale.explore_1 ?? null,
+    explore_2: survey.scale.explore_2 ?? null,
+    explore_3: survey.scale.explore_3 ?? null,
+    explore_4: survey.scale.explore_4 ?? null,
+    agency_1: survey.scale.agency_1 ?? null,
+    agency_2: survey.scale.agency_2 ?? null,
+    agency_3: survey.scale.agency_3 ?? null,
+    mcheck_need_hover: survey.mcheck.need_hover ?? null,
+    mcheck_all_visible: survey.mcheck.all_visible ?? null,
+    mcheck_hover_feedback: survey.mcheck.hover_feedback ?? null,
+
     DV_total_items: totalItems,
     DV_unique_designs: uniqueDesigns,
-    DV_unique_families: uniqueFamilies,
     DV_repeated_units: repeatedUnits,
-    DV_max_selected_display_position: selectedPositionsUnique.length ? Math.max(...selectedPositionsUnique) : null,
-    DV_mean_selected_display_position_unique: selectedPositionsUnique.length ? mean(selectedPositionsUnique) : null,
-    DV_mean_selected_display_position_unit_weighted: selectedPositionsUnitWeighted.length ? mean(selectedPositionsUnitWeighted) : null,
-
-    mediator_explorative_mindset: mean(dimVals.explorative_mindset || []),
-    mediator_information_agency: mean(dimVals.information_agency || []),
 
     behavior_scroll_px: behavior.max_scroll_y,
     behavior_scroll_ratio: behavior.max_scroll_ratio,
@@ -1705,18 +1710,15 @@ function computeData() {
     behavior_total_hover_ms: Math.round(totalHoverMs),
     behavior_reveal_count: behavior.reveal_count,
 
-    mcheck_need_hover: survey.mcheck.need_hover ?? null,
-    mcheck_all_visible: survey.mcheck.all_visible ?? null,
-    mcheck_hover_feedback: survey.mcheck.hover_feedback ?? null,
 
     demo_gender: survey.gender,
     demo_age: survey.age ? Number(survey.age) : null,
 
     selected_products: selected,
     cart_raw: { ...cart },
-    scale_responses: { ...survey.scale },
-    mcheck_responses: { ...survey.mcheck },
-    hover_summary: hoverSummary,
+
+
+
     view_summary: viewSummary,
 
     shopping_time_sec: shoppingStartTime ? Math.round((Date.now() - shoppingStartTime) / 1000) : null,
