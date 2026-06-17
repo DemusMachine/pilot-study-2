@@ -463,36 +463,8 @@
     border-color: #d9cbbb;
   }
 
-  /* Condition 3: Hover reveal; action buttons remain visible */
-  body.cond-hover_reveal .info-content {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.14s ease, visibility 0.14s ease;
-  }
 
-  body.cond-hover_reveal .card:hover .info-content,
-  body.cond-hover_reveal .card:focus-within .info-content {
-    opacity: 1;
-    visibility: visible;
-  }
 
-  body.cond-hover_reveal .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow);
-    border-color: #d9cbbb;
-  }
-
-  body.cond-hover_reveal .info-placeholder {
-    display: block;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.35;
-    padding-top: 4px;
-  }
-
-  body:not(.cond-hover_reveal) .info-placeholder {
-    display: none;
-  }
 
   /* Survey overlay */
   .overlay {
@@ -822,7 +794,6 @@
   <span>Researcher preview</span>
   <button data-cond="no_hover" onclick="setCondition('no_hover')">Group 1 · No hover</button>
   <button data-cond="hover_control" onclick="setCondition('hover_control')">Group 2 · Hover control</button>
-  <button data-cond="hover_reveal" onclick="setCondition('hover_reveal')">Group 3 · Hover reveal</button>
 </div>
 
 <div class="app">
@@ -871,14 +842,14 @@
    1. CONDITION ASSIGNMENT
    ========================================================= */
 
-const CONDITIONS = ["no_hover", "hover_control", "hover_reveal"];
+const CONDITIONS = ["no_hover", "hover_control"];
 const urlParams = new URLSearchParams(window.location.search);
 const urlCondition = urlParams.get("condition");
 const debugMode = urlParams.get("debug") === "1";
 const prolificPid = urlParams.get("PROLIFIC_PID") || null;
 const studyId = urlParams.get("STUDY_ID") || null;
 const sessionId = urlParams.get("SESSION_ID") || null;
-const PROLIFIC_COMPLETION_URL = "https://app.prolific.co/submissions/complete?cc=CLGD90LD";
+const PROLIFIC_COMPLETION_URL = "https://app.prolific.com/submissions/complete?cc=CLGD90LD";
 
 let condition = CONDITIONS.includes(urlCondition)
   ? urlCondition
@@ -1304,22 +1275,11 @@ function attachHoverLogging(card, product) {
     }
 
     hoverSummary[product.product_id].hover_count += 1;
-
-    if (condition === "hover_reveal") {
-      hoverSummary[product.product_id].reveal_count += 1;
-      behavior.reveal_count += 1;
-      logEvent("reveal_start", {
-        product_id: product.product_id,
-        display_position: product.display_position,
-        family_id: product.family_id
-      });
-    } else {
-      logEvent("hover_start", {
-        product_id: product.product_id,
-        display_position: product.display_position,
-        family_id: product.family_id
-      });
-    }
+    logEvent("hover_start", {
+      product_id: product.product_id,
+      display_position: product.display_position,
+      family_id: product.family_id
+    });
   });
 
   card.addEventListener("mouseleave", () => {
@@ -1334,7 +1294,7 @@ function attachHoverLogging(card, product) {
         display_position: product.display_position,
         family_id: product.family_id,
         hover_duration_ms: duration,
-        information_revealed: condition === "hover_reveal"
+        information_revealed: false
       });
     }
   });
@@ -1708,7 +1668,6 @@ function computeData() {
     behavior_unique_hovered_products: uniqueHoveredProducts,
     behavior_total_hover_count: totalHoverCount,
     behavior_total_hover_ms: Math.round(totalHoverMs),
-    behavior_reveal_count: behavior.reveal_count,
 
 
     demo_gender: survey.gender,
@@ -1858,7 +1817,7 @@ function flattenForCSV(d) {
     behavior_unique_hovered_products: d.behavior_unique_hovered_products,
     behavior_total_hover_count: d.behavior_total_hover_count,
     behavior_total_hover_ms: d.behavior_total_hover_ms,
-    behavior_reveal_count: d.behavior_reveal_count,
+
     mcheck_need_hover: d.mcheck_need_hover,
     mcheck_all_visible: d.mcheck_all_visible,
     mcheck_hover_feedback: d.mcheck_hover_feedback,
