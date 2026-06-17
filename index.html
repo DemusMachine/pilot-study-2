@@ -787,7 +787,6 @@
 <div class="device-warning">
   <div class="box">
     <h2>Please use a desktop or laptop device</h2>
-    <p>This study requires a mouse or trackpad because the experimental manipulation depends on hover behavior.</p>
   </div>
 </div>
 
@@ -1778,7 +1777,6 @@ sendToGoogleSheet(sheetData);
   logEvent("survey_submitted", {
     total_items: d.DV_total_items,
     unique_designs: d.DV_unique_designs,
-    unique_families: d.DV_unique_families
   });
   document.getElementById("sheet").innerHTML = `
     <div class="done">
@@ -1810,10 +1808,7 @@ function flattenForCSV(d) {
     condition: d.condition,
     DV_total_items: d.DV_total_items,
     DV_unique_designs: d.DV_unique_designs,
-    DV_unique_families: d.DV_unique_families,
     DV_repeated_units: d.DV_repeated_units,
-    mediator_explorative_mindset: d.mediator_explorative_mindset,
-    mediator_information_agency: d.mediator_information_agency,
     behavior_scroll_px: d.behavior_scroll_px,
     behavior_scroll_ratio: d.behavior_scroll_ratio,
     behavior_unique_product_views: d.behavior_unique_product_views,
