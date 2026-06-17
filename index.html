@@ -130,26 +130,26 @@
   }
 
   /* Start page */
-  .start-screen {
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    align-items: center;
-    gap: 48px;
-    padding: 64px 288px;
-  }
+.start-screen {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: clamp(40px, 5vw, 80px);
+  padding: clamp(40px, 6vh, 80px) clamp(40px, 10vw, 200px);
+}
 
   .start-copy {
     max-width: 640px;
   }
 
-  .brand-start {
-    font-family: var(--serif);
-    font-size: 30px;
-    font-weight: 600;
-    margin-bottom: 42px;
-    letter-spacing: 0.02em;
-  }
+.brand-start {
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.5vw, 42px);
+  font-weight: 600;
+  margin-bottom: 42px;
+  letter-spacing: 0.02em;
+}
 
   .brand-start small {
     display: block;
@@ -162,20 +162,20 @@
     font-weight: 500;
   }
 
-  .start-copy h1 {
-    font-family: var(--serif);
-    font-size: 58px;
-    line-height: 1.05;
-    font-weight: 500;
-    margin-bottom: 20px;
-  }
+.start-copy h1 {
+  font-family: var(--serif);
+  font-size: clamp(40px, 5vw, 76px);
+  line-height: 1.05;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
 
-  .start-copy p {
-    color: var(--muted);
-    max-width: 560px;
-    margin-bottom: 14px;
-    font-size: 16px;
-  }
+.start-copy p {
+  color: var(--muted);
+  max-width: 640px;
+  margin-bottom: 14px;
+  font-size: clamp(15px, 1.2vw, 20px);
+}
 
   .start-btn {
     margin-top: 24px;
@@ -193,15 +193,15 @@
     background: #000;
   }
 
-  .start-visual {
-    max-width: 430px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    overflow: hidden;
-    margin: 0 auto;
-    box-shadow: 0 28px 70px rgba(120, 81, 58, 0.18);
-    background: #fff;
-  }
+.start-visual {
+  max-width: clamp(320px, 28vw, 600px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  box-shadow: 0 28px 70px rgba(120, 81, 58, 0.18);
+  background: #fff;
+}
 
   .start-visual svg {
     width: 100%;
@@ -313,7 +313,7 @@
   .grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 28px;
+    gap: 80px;
     padding: 34px 48px 76px;
     max-width: 1240px;
     margin: 0 auto;
@@ -800,9 +800,9 @@
   <section class="start-screen" id="startScreen">
     <div class="start-copy">
       <div class="brand-start">Maison&nbsp;Tavola<small>Artisan Placemats</small></div>
-      <h1>Browse placemats for your dining table.</h1>
-      <p>Imagine you are shopping online for placemats for your home dining table.</p>
-      <p>Please browse the collection as you normally would and add any placemats you would like to purchase to your cart. You may buy multiple units of the same design if you wish.</p>
+      <h1>Explore placemats for your home dining table.</h1>
+      <p>Imagine that you are shopping online for placemats for your home.</p>
+      <p>Browse the collection as you normally would, and add any designs you would genuinely consider buying to your cart. You may choose as many or as few items as you like.</p>
       <p>There is no required budget and no required number of items.</p>
       <button class="start-btn" onclick="startShopping()">Start shopping</button>
     </div>
@@ -1194,7 +1194,7 @@ logEvent("page_loaded", { participant_id: participantId });
    ========================================================= */
 
 document.getElementById("startVisual").innerHTML = svgProduct(products.find(p => p.product_id === "P36"));
-
+const showPlaceholder = condition === 'hover_control';
 function renderGrid() {
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
@@ -1234,7 +1234,7 @@ function renderGrid() {
       </div>
       <div class="body">
         <div class="info-area">
-          <div class="info-placeholder">Hover to view product details</div>
+          ${showPlaceholder ? '<div class="info-placeholder">Hover to view product details</div>' : ''}
           <div class="info-content">
             <div class="name">${p.display_name}</div>
             <div class="design">${p.desc}</div>
@@ -1442,52 +1442,56 @@ const scaleItems = [
   {
     key: "explore_1",
     dim: "explorative_mindset",
-    text: "Browsing this store made me feel curious about what I might find."
+    text: "The way the product images were displayed felt smooth and effortless."
   },
   {
     key: "explore_2",
     dim: "explorative_mindset",
-    text: "The shopping experience felt like a process of discovery."
+    text: "It was easy to view the different images of each product."
   },
   {
     key: "explore_3",
     dim: "explorative_mindset",
-    text: "I felt motivated to keep looking through the products."
+    text: "Seeing more images of a product felt natural and easy."
   },
   {
     key: "explore_4",
     dim: "explorative_mindset",
-    text: "I felt like I was actively exploring the collection."
+    text: "Viewing the product images required little effort from me."
   },
   {
     key: "agency_1",
     dim: "information_agency",
-    text: "I felt in control of how I viewed product information."
+    text: "I felt in control of how I viewed the product images."
   },
   {
     key: "agency_2",
     dim: "information_agency",
-    text: "It was up to me to decide when to view product information."
+    text: "It was up to me to decide when to see more of each product."
   },
   {
     key: "agency_3",
     dim: "information_agency",
-    text: "I felt that I was actively deciding what information to look at."
+    text: "I was the one driving how the images were shown to me."
   }
 ];
 
-const manipulationItems = [
+const evaluation_survey = [
   {
-    key: "need_hover",
-    text: "I had to hover over a product to see its name and price."
+    key: "browse_enjoy_1",
+    text: "I enjoyed the experience of browsing this store."
   },
   {
-    key: "all_visible",
-    text: "Product names and prices were visible without any extra action."
+    key: "browse_enjoy_2",
+    text: "Browsing the products was a pleasant experience."
   },
   {
-    key: "hover_feedback",
-    text: "The products visually responded when I moved my cursor over them."
+    key: "browse_enjoy_3",
+    text: "The placemats in this store seemed appealing to me."
+  },
+  {
+    key: "browse_enjoy_4",
+    text: "Overall, I had a positive impression of the products."
   }
 ];
 
@@ -1532,7 +1536,7 @@ function checkout() {
 
   let mcheckHtml = `<div class="scale-group-label">Thinking back on the website</div>`;
 
-  manipulationItems.forEach(item => {
+  evaluation_survey.forEach(item => {
     let options = "";
     for (let v = 1; v <= 7; v++) {
       options += `
@@ -1653,9 +1657,10 @@ function computeData() {
     agency_1: survey.scale.agency_1 ?? null,
     agency_2: survey.scale.agency_2 ?? null,
     agency_3: survey.scale.agency_3 ?? null,
-    mcheck_need_hover: survey.mcheck.need_hover ?? null,
-    mcheck_all_visible: survey.mcheck.all_visible ?? null,
-    mcheck_hover_feedback: survey.mcheck.hover_feedback ?? null,
+    browse_enjoy_1: survey.mcheck.browse_enjoy_1 ?? null,
+    browse_enjoy_2: survey.mcheck.browse_enjoy_2 ?? null,
+    browse_enjoy_3: survey.mcheck.browse_enjoy_3 ?? null,
+    browse_enjoy_4: survey.mcheck.browse_enjoy_4 ?? null,
 
     DV_total_items: totalItems,
     DV_unique_designs: uniqueDesigns,
@@ -1724,7 +1729,7 @@ const errorDiv = document.getElementById('formError');
     }
 
     // 2. Check manipulation checks
-    for (const item of manipulationItems) {
+    for (const item of evaluation_survey) {
       if (survey.mcheck[item.key] == null || survey.mcheck[item.key] === '') {
         if (errorDiv) {
           errorDiv.textContent = 'Please answer all questions about the website before submitting.';
@@ -1759,7 +1764,7 @@ const errorDiv = document.getElementById('formError');
   const d = computeData();
   const sheetData = { ...d };
 const fieldsToJSON = [
-  'selected_products', 'cart_raw', 'scale_responses', 'mcheck_responses',
+  'selected_products', 'cart_raw', 'scale_responses',
   'hover_summary', 'view_summary', 'product_order', 'raw_events'
 ];
 fieldsToJSON.forEach(field => {
@@ -1806,9 +1811,6 @@ function flattenForCSV(d) {
     DV_unique_designs: d.DV_unique_designs,
     DV_unique_families: d.DV_unique_families,
     DV_repeated_units: d.DV_repeated_units,
-    DV_max_selected_display_position: d.DV_max_selected_display_position,
-    DV_mean_selected_display_position_unique: d.DV_mean_selected_display_position_unique,
-    DV_mean_selected_display_position_unit_weighted: d.DV_mean_selected_display_position_unit_weighted,
     mediator_explorative_mindset: d.mediator_explorative_mindset,
     mediator_information_agency: d.mediator_information_agency,
     behavior_scroll_px: d.behavior_scroll_px,
@@ -1818,9 +1820,10 @@ function flattenForCSV(d) {
     behavior_total_hover_count: d.behavior_total_hover_count,
     behavior_total_hover_ms: d.behavior_total_hover_ms,
 
-    mcheck_need_hover: d.mcheck_need_hover,
-    mcheck_all_visible: d.mcheck_all_visible,
-    mcheck_hover_feedback: d.mcheck_hover_feedback,
+    browse_enjoy_1: d.browse_enjoy_1,
+    browse_enjoy_2: d.browse_enjoy_2,
+    browse_enjoy_3: d.browse_enjoy_3,
+    browse_enjoy_4: d.browse_enjoy_4,
     demo_gender: d.demo_gender,
     demo_age: d.demo_age,
     shopping_time_sec: d.shopping_time_sec,
