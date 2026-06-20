@@ -813,8 +813,9 @@
     <div class="topbar">
       <div class="brand">Maison&nbsp;Tavola<small>Artisan Placemats</small></div>
       <div class="topbar-right">
-        <span class="cart-status">Cart <b id="cartCount">0</b> · <span id="cartTotal">$0.00</span></span>
-        <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" disabled>Proceed to checkout →</button>
+        <span class="cart-status">Cart <b id="cartCount">0</b> · <span id="cartTotal">$0.00 / $50.00</span></span>
+        <span id="budgetNote" style="display:none; color:#b23d3d; font-size:13px; margin-left:10px;">$50 budget limit reached</span>
+        <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">Proceed to checkout →</button>
       </div>
     </div>
 
@@ -1342,12 +1343,29 @@ function setupViewObserver() {
 function productById(productId) {
   return orderedProducts.find(p => p.product_id === productId);
 }
+const BUDGET_LIMIT = 50;
 
 function changeQty(productId, delta) {
   const product = productById(productId);
   const oldQty = cart[productId] || 0;
   const newQty = Math.max(0, oldQty + delta);
 
+  if (delta > 0) {
+    const currentTotal = getTotalItems() * PRICE;
+    if (currentTotal + PRICE > BUDGET_LIMIT) {
+      logEvent("budget_limit_blocked", {
+        product_id: productId,
+        attempted_total: currentTotal + PRICE,
+        budget_limit: BUDGET_LIMIT
+      });
+      const note = document.getElementById("budgetNote");
+      if (note) {
+        note.style.display = "block";
+        note.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      return;
+    }
+  }
   if (newQty === 0) {
     delete cart[productId];
   } else {
@@ -1377,9 +1395,13 @@ function getTotalItems() {
 
 function updateCartUI() {
   const total = getTotalItems();
+  const spend = total * PRICE;
   document.getElementById("cartCount").textContent = total;
-  document.getElementById("cartTotal").textContent = "$" + (total * PRICE).toFixed(2);
-  document.getElementById("checkoutBtn").disabled = total === 0;
+  document.getElementById("cartTotal").textContent = "$" + spend.toFixed(2) + " / $" + BUDGET_LIMIT + ".00";
+  document.getElementById("checkoutBtn").disabled = false;
+
+  const note = document.getElementById("budgetNote");
+  if (note && spend < BUDGET_LIMIT) note.style.display = "none";
 }
 
 /* =========================================================
