@@ -194,7 +194,7 @@
   }
 
 .start-visual {
-  max-width: clamp(320px, 28vw, 600px);
+  max-width: clamp(320px, 30vw, 600px);
   aspect-ratio: 1;
   border-radius: 50%;
   overflow: hidden;
@@ -203,11 +203,6 @@
   background: #fff;
 }
 
-  .start-visual svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
 
   /* Topbar */
   .topbar {
@@ -813,6 +808,20 @@
 .card { transition: transform .35s ease, box-shadow .35s ease; }
 .card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(20,20,20,0.10); }
 
+.main-photo {
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.main-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 </style>
 </head>
 
@@ -840,7 +849,9 @@
       <p>There is a $50 budget.</p>
       <button class="start-btn" onclick="startShopping()">Start shopping</button>
     </div>
-    <div class="start-visual" id="startVisual"></div>
+    <div class="main-photo">
+      <img src="pexels-davincidelasfotos-34328706.jpg" width="300" height="400">
+    </div>
   </section>
 
   <section id="shopScreen" style="display:none;">
