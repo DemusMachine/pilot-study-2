@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Maison Tavola — Placemat Shopping Study</title>
+<title>Maison Tavola — Drinks Shopping Study</title>
 
 <style>
   :root {
@@ -321,8 +321,7 @@
   }
 
   .card {
-    background: var(--card);
-    border: 1px solid var(--line);
+
     border-radius: clamp(14px, 1.2vw, 24px);
     min-height: clamp(360px, 30vh, 520px);
     overflow: hidden;
@@ -333,7 +332,7 @@
 
   .card .img {
     aspect-ratio: 1;
-    background: var(--soft);
+
     overflow: hidden;
     position: relative;
   }
@@ -377,7 +376,7 @@
 
   .name {
     font-family: var(--serif);
-    font-size: clamp(18px, 1.6vw, 32px);
+    font-size: clamp(18px, 1.4vw, 32px);
     font-weight: 500;
     line-height: 1.2;
   }
@@ -651,27 +650,14 @@
   .download-row button {
     flex: 1;
   }
-  .card[data-product-id="P14"] .img img,
-  .card[data-product-id="P16"] .img img,
-  .card[data-product-id="P19"] .img img {
-  transform: scale(0.85);
-}
-  .card[data-product-id="P14"] .img{
-    background-color: #dfd8cd;
-  }
-  .card[data-product-id="P16"] .img{
-    background-color: #f0efea;
-  }
-  .card[data-product-id="P19"] .img{
-    background-color: #f0f1ec;
-  }
+
+
 /* Carousel styles for no-hover condition */
 .carousel-container {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--soft);
 }
 
 .carousel-track {
@@ -691,16 +677,23 @@
   pointer-events: none;
 }
 
+
+
 .carousel-slide.active {
   opacity: 1;
   pointer-events: auto;
 }
 
-.carousel-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
+.carousel-main {
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.carousel-alt {
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 
 .carousel-btn {
@@ -786,46 +779,22 @@
   overflow: hidden;
   border-radius: 16px;
   aspect-ratio: 1;
-  background: #f7f7f5;
+  background: transparent;
 }
-.card-image-wrap img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.1);
+.card-image-wrap .img-base {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   /* first image */
 }
-.img-base {
-  z-index: 1;
-  transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1);
-}
-.img-hover {
-  z-index: 2;
-  opacity: 0;
-  transform: scale(1.045);
-  transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1);
-}
-.card:hover .img-base  { opacity: 0; transform: scale(1.015); }
-.card:hover .img-hover { opacity: 1; transform: scale(1); }
 
-/* Subtle lift on the whole card — reinforces the hover state */
-.card { transition: transform .35s ease, box-shadow .35s ease; }
-.card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(20,20,20,0.10); }
-
-/* ── Premium crossfade hover (Apple/Nike-style) ────────────────────── */
-.card-image-wrap {
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  aspect-ratio: 1;
-}
-.card-image-wrap img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.card-image-wrap .img-hover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;     /* hovered image */
 }
 .img-base {
   z-index: 1;
@@ -864,9 +833,9 @@
 <div class="app">
   <section class="start-screen" id="startScreen">
     <div class="start-copy">
-      <div class="brand-start">Maison&nbsp;Tavola<small>Artisan Placemats</small></div>
-      <h1>Explore placemats for your home dining table.</h1>
-      <p>Imagine that you are shopping online for placemats for your home.</p>
+      <div class="brand-start">Maison&nbsp;Tavola<small>Artisan Drinks</small></div>
+      <h1>Explore drinks for your taste.</h1>
+      <p>Imagine that you are shopping online for drinks.</p>
       <p>Browse the collection as you normally would, and add any designs you would genuinely consider buying to your cart. You may choose as many or as few items as you like.</p>
       <p>There is a $50 budget.</p>
       <button class="start-btn" onclick="startShopping()">Start shopping</button>
@@ -876,7 +845,7 @@
 
   <section id="shopScreen" style="display:none;">
     <div class="topbar">
-      <div class="brand">Maison&nbsp;Tavola<small>Artisan Placemats</small></div>
+      <div class="brand">Maison&nbsp;Tavola<small>Artisan Drinks</small></div>
       <div class="topbar-right">
         <span class="cart-status">Cart <b id="cartCount">0</b> · <span id="cartTotal">$0.00 / $50.00</span></span>
         <span id="budgetNote" style="display:none; color:#b23d3d; font-size:13px; margin-left:10px;">$50 budget limit reached</span>
@@ -887,7 +856,7 @@
     <div class="shop-head">
       <div class="eyebrow">The Collection</div>
       <h2>Browse the full range</h2>
-      <p>All placemats are priced at $10.00. Add any placemats you would like to purchase.</p>
+      <p>All drinks are priced at $10.00. Add any drinks you would like to purchase.</p>
     </div>
 
     <div class="grid" id="grid"></div>
@@ -955,7 +924,7 @@ const families = [
   {
     family_id: "F1",
     family_name: "Straw Loop Oval",
-    description: "Art for the table.",
+    description: "Store anywhere. Chill to enjoy.",
     shape: "oval",
     colors: [
       ["Natural", "#d8bd8a", "#b89055", "#f0dfbc"],
@@ -970,7 +939,7 @@ const families = [
   {
     family_id: "F2",
     family_name: "Straw Loop Round",
-    description: "Art for the table.",
+    description: "Store anywhere. Chill to enjoy.",
     shape: "round",
     colors: [
       ["Natural", "#d7bb83", "#a98248", "#f2dfb7"],
@@ -985,7 +954,7 @@ const families = [
   {
     family_id: "F3",
     family_name: "Rustic Ring Weave",
-    description: "Art for the table.",
+    description: "Store anywhere. Chill to enjoy.",
     shape: "round",
     colors: [
       ["Natural Fiber", "#cba66b", "#8f6a3c", "#ead8b9"],
@@ -996,52 +965,8 @@ const families = [
       ["Chestnut", "#9a5c35", "#63351d", "#d5a077"]
     ],
     motif: "rusticRing"
-  },
-  {
-    family_id: "F4",
-    family_name: "Provence Rattan",
-    description: "Art for the table.",
-    shape: "round",
-    colors: [
-      ["Golden Rattan", "#d6a85f", "#a87632", "#f0d198"],
-      ["Whitewash", "#eee6d7", "#cbbda9", "#faf5ea"],
-      ["Pale Oak", "#d2b98d", "#9b7b4d", "#ead9bb"],
-      ["Caramel", "#c6853e", "#85521d", "#e9b978"],
-      ["Gray Wash", "#aaa39a", "#70695f", "#ded8d0"],
-      ["Toasted Almond", "#c69b69", "#8d6237", "#e8cba5"]
-    ],
-    motif: "braidedRattan"
-  },
-  {
-    family_id: "F5",
-    family_name: "Garden Botanical",
-    description: "Art for the table.",
-    shape: "rect",
-    colors: [
-      ["Basil", "#567a4b", "#88a978", "#f4efe5"],
-      ["Chambray", "#5f8aaa", "#9bb9cc", "#f4efe5"],
-      ["Pistachio", "#9aaa6b", "#c9d2a2", "#f4efe5"],
-      ["Mulberry", "#8c5270", "#c58aa6", "#f4efe5"],
-      ["Walnut", "#83624a", "#b89c7e", "#f4efe5"],
-      ["Ochre Moss", "#b68a42", "#74815b", "#f4efe5"]
-    ],
-    motif: "botanical"
-  },
-  {
-    family_id: "F6",
-    family_name: "Ornamental Lace",
-    shape: "round",
-    description: "Art for the table.",
-    colors: [
-      ["Gold", "#c49a42", "#8d6b27", "#f4e7c3"],
-      ["Silver", "#bebebe", "#858585", "#eeeeee"],
-      ["Evergreen", "#315849", "#19362c", "#d7e3dd"],
-      ["Champagne", "#d9be82", "#a7894d", "#f6ebcf"],
-      ["Pewter", "#8d8b86", "#5e5b56", "#ddd9d0"],
-      ["Bronze", "#a46a3c", "#6b3f22", "#e1b486"]
-    ],
-    motif: "lace"
   }
+
 ];
 const descriptions =[];
 const products = [];
@@ -1050,7 +975,7 @@ families.forEach(f => {
     const productNumber = products.length + 1;
     products.push({
       product_id: "P" + String(productNumber).padStart(2, "0"),
-      display_name: "Placemat",
+      display_name: "6g Fiber",
       design_label: "Design " + String(productNumber).padStart(2, "0"),
       desc: f.description,
       family_id: f.family_id,
@@ -1091,124 +1016,39 @@ function shuffle(arr) {
 }
 
 function balancedOrder(products) {
-  const byFamily = {};
-  products.forEach(p => {
-    if (!byFamily[p.family_id]) byFamily[p.family_id] = [];
-    byFamily[p.family_id].push(p);
-  });
+    const byFamily = {};
 
-  Object.keys(byFamily).forEach(fid => {
-    byFamily[fid] = shuffle(byFamily[fid]);
-  });
-
-  const ordered = [];
-  for (let block = 0; block < 6; block++) {
-    const familyIds = shuffle(Object.keys(byFamily));
-    familyIds.forEach(fid => {
-      ordered.push(byFamily[fid][block]);
+    products.forEach(p => {
+        if (!byFamily[p.family_id]) byFamily[p.family_id] = [];
+        byFamily[p.family_id].push(p);
     });
-  }
 
-  return ordered.map((p, i) => ({
-    ...p,
-    display_position: i + 1
-  }));
+    Object.keys(byFamily).forEach(fid => {
+        byFamily[fid] = shuffle(byFamily[fid]);
+    });
+
+    const ordered = [];
+
+    let remaining = true;
+
+    while (remaining) {
+        remaining = false;
+
+        shuffle(Object.keys(byFamily)).forEach(fid => {
+            if (byFamily[fid].length) {
+                ordered.push(byFamily[fid].shift());
+                remaining = true;
+            }
+        });
+    }
+
+    return ordered.map((p, i) => ({
+        ...p,
+        display_position: i + 1
+    }));
 }
 
 const orderedProducts = balancedOrder(products);
-
-/* =========================================================
-   3. SVG PRODUCT IMAGE GENERATION
-   In production, replace these SVGs with real AI-generated images.
-   ========================================================= */
-
-function svgProduct(p) {
-  const [c1, c2, c3] = p.colors;
-  const shape = p.shape;
-
-  const bg = "#faf8f4";
-  let matBase = "";
-  let motif = "";
-
-  if (shape === "round") {
-    matBase = `<circle cx="50" cy="50" r="38" fill="${c3}" stroke="${c2}" stroke-width="2"/>`;
-  } else if (shape === "oval") {
-    matBase = `<ellipse cx="50" cy="50" rx="42" ry="30" fill="${c3}" stroke="${c2}" stroke-width="2"/>`;
-  } else {
-    matBase = `<rect x="15" y="25" width="70" height="50" rx="6" fill="${c3}" stroke="${c2}" stroke-width="2"/>`;
-  }
-
-  if (p.motif === "loopOval") {
-    for (let i = 0; i < 12; i++) {
-      const a = (i / 12) * Math.PI * 2;
-      motif += `<ellipse cx="${50 + 36 * Math.cos(a)}" cy="${50 + 25 * Math.sin(a)}" rx="4" ry="2.5" fill="none" stroke="${c1}" stroke-width="1.8" transform="rotate(${i * 30} ${50 + 36 * Math.cos(a)} ${50 + 25 * Math.sin(a)})"/>`;
-    }
-    motif += `<ellipse cx="50" cy="50" rx="28" ry="18" fill="none" stroke="${c1}" stroke-width="2" opacity=".65"/>`;
-  }
-
-  if (p.motif === "loopRound") {
-    for (let r = 12; r <= 34; r += 7) {
-      motif += `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${r % 2 ? c1 : c2}" stroke-width="2" opacity=".8"/>`;
-    }
-  }
-
-  if (p.motif === "rusticRing") {
-    for (let i = 0; i < 18; i++) {
-      const a = (i / 18) * 360;
-      motif += `<path d="M50 14 Q55 22 50 30 Q45 22 50 14" fill="${i % 2 ? c1 : c2}" opacity=".75" transform="rotate(${a} 50 50)"/>`;
-    }
-    motif += `<circle cx="50" cy="50" r="18" fill="none" stroke="${c1}" stroke-width="5" opacity=".55"/>`;
-  }
-
-  if (p.motif === "braidedRattan") {
-    for (let r = 16; r <= 36; r += 6) {
-      motif += `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${c1}" stroke-width="3" stroke-dasharray="5 4" opacity=".75"/>`;
-    }
-  }
-
-  if (p.motif === "botanical") {
-    for (let i = 0; i < 7; i++) {
-      const x = 22 + i * 9;
-      motif += `<path d="M${x} 68 C${x + 8} 55, ${x - 5} 43, ${x + 6} 31" fill="none" stroke="${c1}" stroke-width="1.4" opacity=".9"/>`;
-      motif += `<ellipse cx="${x + 4}" cy="${43 + (i % 3) * 4}" rx="4" ry="7" fill="${c2}" opacity=".8" transform="rotate(${i * 18} ${x + 4} ${43 + (i % 3) * 4})"/>`;
-    }
-  }
-
-  if (p.motif === "lace") {
-    for (let i = 0; i < 12; i++) {
-      const a = i * 30;
-      motif += `<path d="M50 18 C58 32,58 42,50 50 C42 42,42 32,50 18Z" fill="${c1}" opacity=".58" transform="rotate(${a} 50 50)"/>`;
-    }
-    motif += `<circle cx="50" cy="50" r="16" fill="${c3}" stroke="${c1}" stroke-width="2"/>`;
-    motif += `<circle cx="50" cy="50" r="7" fill="${c1}" opacity=".75"/>`;
-  }
-
-  if (p.motif === "stripe") {
-    for (let i = 0; i < 8; i++) {
-      motif += `<rect x="${17 + i * 8}" y="25" width="4" height="50" fill="${i % 2 ? c1 : c2}" opacity=".9"/>`;
-    }
-  }
-
-  if (p.motif === "meadow") {
-    for (let i = 0; i < 9; i++) {
-      const x = 20 + (i % 5) * 12;
-      const y = 36 + Math.floor(i / 5) * 20;
-      motif += `<line x1="${x}" y1="${y + 12}" x2="${x + 3}" y2="${y}" stroke="${c1}" stroke-width="1.2"/>`;
-      motif += `<circle cx="${x + 3}" cy="${y}" r="3.2" fill="${i % 2 ? c1 : c2}" opacity=".85"/>`;
-      motif += `<ellipse cx="${x + 7}" cy="${y + 6}" rx="2.5" ry="5" fill="${c1}" opacity=".55"/>`;
-    }
-  }
-
-
-  return `
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${p.design_label}">
-      <rect width="100" height="100" fill="${bg}"/>
-      <ellipse cx="50" cy="82" rx="33" ry="5" fill="#000" opacity=".07"/>
-      ${matBase}
-      ${motif}
-    </svg>
-  `;
-}
 
 /* =========================================================
    4. STATE AND LOGGING
@@ -1260,7 +1100,6 @@ logEvent("page_loaded", { participant_id: participantId });
    5. RENDERING
    ========================================================= */
 
-document.getElementById("startVisual").innerHTML = svgProduct(products.find(p => p.product_id === "P36"));
 const showPlaceholder = condition === 'hover_control';
 function renderGrid() {
   const grid = document.getElementById("grid");
@@ -1280,10 +1119,13 @@ function renderGrid() {
   ? `<div class="carousel-container" data-product-id="${p.product_id}" data-current="0">
       <div class="carousel-track">
         <div class="carousel-slide active">
-          <img src="images/${p.product_id}.jpg" alt="${p.display_name}">
+            <img class="carousel-main"
+                src="images/${p.product_id}.jpg">
         </div>
+
         <div class="carousel-slide">
-          <img src="images-hover/${p.product_id}.jpg" alt="${p.display_name} - alternate view">
+            <img class="carousel-alt"
+                src="images-hover/${p.product_id}.jpg">
         </div>
       </div>
       <button class="carousel-btn prev" type="button" aria-label="Previous" onclick="event.stopPropagation(); changeSlide(this, -1)">‹</button>
@@ -1576,7 +1418,7 @@ text:"Browsing the products was a pleasant experience."
 
 {
 key:"app1",
-text:"The placemats in this store seemed appealing to me."
+text:"The drinks in this store seemed appealing to me."
 },
 
 {
@@ -1662,7 +1504,7 @@ function checkout() {
 
   sheet.innerHTML = `
     <h2>Before you go</h2>
-    <p class="sub">You added ${total} placemat${total !== 1 ? "s" : ""} to your cart. Please answer a few questions to complete your visit.</p>
+    <p class="sub">You added ${total} drinks${total !== 1 ? "s" : ""} to your cart. Please answer a few questions to complete your visit.</p>
     <div id="formError" style="color: #a23c2e; background: #fbe9e7; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: none; font-weight: 500;"></div>
     <div class="field">
       ${scaleHtml}
