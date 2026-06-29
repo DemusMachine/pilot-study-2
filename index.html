@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -779,6 +779,71 @@
   opacity: 1;
   pointer-events: auto;          /* Restores clickability */
 }
+
+/* ── Premium crossfade hover (Apple/Nike-style) ────────────────────── */
+.card-image-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  aspect-ratio: 1;
+  background: #f7f7f5;
+}
+.card-image-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1);
+}
+.img-base {
+  z-index: 1;
+  transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1);
+}
+.img-hover {
+  z-index: 2;
+  opacity: 0;
+  transform: scale(1.045);
+  transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1);
+}
+.card:hover .img-base  { opacity: 0; transform: scale(1.015); }
+.card:hover .img-hover { opacity: 1; transform: scale(1); }
+
+/* Subtle lift on the whole card — reinforces the hover state */
+.card { transition: transform .35s ease, box-shadow .35s ease; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(20,20,20,0.10); }
+
+/* ── Premium crossfade hover (Apple/Nike-style) ────────────────────── */
+.card-image-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  aspect-ratio: 1;
+}
+.card-image-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.img-base {
+  z-index: 1;
+  transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1);
+}
+.img-hover {
+  z-index: 2;
+  opacity: 0;
+  transform: scale(1.045);
+  transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1);
+}
+.card:hover .img-base  { opacity: 0; transform: scale(1.015); }
+.card:hover .img-hover { opacity: 1; transform: scale(1); }
+
+/* Subtle lift on the whole card — reinforces the hover state */
+.card { transition: transform .35s ease, box-shadow .35s ease; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(20,20,20,0.10); }
+
 </style>
 </head>
 
@@ -803,7 +868,7 @@
       <h1>Explore placemats for your home dining table.</h1>
       <p>Imagine that you are shopping online for placemats for your home.</p>
       <p>Browse the collection as you normally would, and add any designs you would genuinely consider buying to your cart. You may choose as many or as few items as you like.</p>
-      <p>There is no required budget and no required number of items.</p>
+      <p>There is a $50 budget.</p>
       <button class="start-btn" onclick="startShopping()">Start shopping</button>
     </div>
     <div class="start-visual" id="startVisual"></div>
@@ -822,7 +887,7 @@
     <div class="shop-head">
       <div class="eyebrow">The Collection</div>
       <h2>Browse the full range</h2>
-      <p>All placemats are priced at $15.00. Add any placemats you would like to purchase.</p>
+      <p>All placemats are priced at $10.00. Add any placemats you would like to purchase.</p>
     </div>
 
     <div class="grid" id="grid"></div>
@@ -842,7 +907,8 @@
 /* =========================================================
    1. CONDITION ASSIGNMENT
    ========================================================= */
-
+let firstSelectionTime = null;
+let selectionChanges = 0;
 const CONDITIONS = ["no_hover", "hover_control"];
 const urlParams = new URLSearchParams(window.location.search);
 const urlCondition = urlParams.get("condition");
@@ -883,7 +949,7 @@ applyConditionClass();
    8 families × 6 variants = 48 products
    ========================================================= */
 
-const PRICE = 15;
+const PRICE = 10;
 
 const families = [
   {
@@ -1227,9 +1293,9 @@ function renderGrid() {
         <span class="carousel-dot" data-index="1" role="button" tabindex="0" onclick="event.stopPropagation(); goToSlide(this.closest('.carousel-container'), 1)"></span>
       </div>
     </div>` 
-  : `<div style="position:relative; width:100%; height:100%;">
-      <img src="images/${p.product_id}.jpg" alt="${p.display_name}" style="width:100%; height:100%; object-fit:contain;">
-      <img class="hover-img" src="images-hover/${p.product_id}.jpg" alt="${p.display_name}">
+  : `<div class="card-image-wrap">
+      <img class="img-base" src="images/${p.product_id}.jpg" alt="${p.display_name}">
+      <img class="img-hover" data-src="images-hover/${p.product_id}.jpg" alt="${p.display_name} - alternate view">
     </div>`
 }
       </div>
@@ -1349,6 +1415,10 @@ function changeQty(productId, delta) {
   const product = productById(productId);
   const oldQty = cart[productId] || 0;
   const newQty = Math.max(0, oldQty + delta);
+  if (firstSelectionTime === null && delta > 0)
+    firstSelectionTime = Date.now() - shoppingStartTime;
+
+  selectionChanges++;
 
   if (delta > 0) {
     const currentTotal = getTotalItems() * PRICE;
@@ -1440,6 +1510,7 @@ function startShopping() {
   document.getElementById("startScreen").style.display = "none";
   document.getElementById("shopScreen").style.display = "block";
   renderGrid();
+  setupLazyHoverImages();
   updateCartUI();
   logEvent("shopping_started", {
     participant_id: participantId,
@@ -1460,60 +1531,72 @@ const survey = {
 };
 
 const scaleItems = [
-  {
-    key: "explore_1",
-    dim: "explorative_mindset",
-    text: "The way the product images were displayed felt smooth and effortless."
-  },
-  {
-    key: "explore_2",
-    dim: "explorative_mindset",
-    text: "It was easy to view the different images of each product."
-  },
-  {
-    key: "explore_3",
-    dim: "explorative_mindset",
-    text: "Seeing more images of a product felt natural and easy."
-  },
-  {
-    key: "explore_4",
-    dim: "explorative_mindset",
-    text: "Viewing the product images required little effort from me."
-  },
-  {
-    key: "agency_1",
-    dim: "information_agency",
-    text: "I felt in control of how I viewed the product images."
-  },
-  {
-    key: "agency_2",
-    dim: "information_agency",
-    text: "It was up to me to decide when to see more of each product."
-  },
-  {
-    key: "agency_3",
-    dim: "information_agency",
-    text: "I was the one driving how the images were shown to me."
-  }
+
+{
+key:"flu1",
+text:"It was easy to view the different product designs."
+},
+
+{
+key:"flu2",
+text:"Browsing the products felt smooth and effortless."
+},
+
+{
+key:"exp1",
+text:"Browsing this store made me feel curious about what I might find."
+},
+
+{
+key:"exp2",
+text:"I felt like I was actively exploring the collection."
+},
+
+{
+key:"ctrl1",
+text:"I felt in control of how I viewed the product information."
+},
+
+{
+key:"ctrl2",
+text:"I felt that I was guiding my own browsing experience."
+}
 ];
 
 const evaluation_survey = [
-  {
-    key: "browse_enjoy_1",
-    text: "I enjoyed the experience of browsing this store."
-  },
-  {
-    key: "browse_enjoy_2",
-    text: "Browsing the products was a pleasant experience."
-  },
-  {
-    key: "browse_enjoy_3",
-    text: "The placemats in this store seemed appealing to me."
-  },
-  {
-    key: "browse_enjoy_4",
-    text: "Overall, I had a positive impression of the products."
-  }
+{
+key:"enj1",
+text:"I enjoyed the experience of browsing this store."
+},
+
+{
+key:"enj2",
+text:"Browsing the products was a pleasant experience."
+},
+
+{
+key:"app1",
+text:"The placemats in this store seemed appealing to me."
+},
+
+{
+key:"app2",
+text:"Overall, I had a positive impression of the products."
+},
+{
+key:"mc1",
+text:"Product details appeared after I moved my cursor over a product."
+},
+
+{
+key:"mc2",
+text:"Product details were visible without any extra action."
+},
+
+{
+key:"mc3",
+text:"Seeing a product's details required me to interact with the page."
+}
 ];
 
 function checkout() {
@@ -1532,7 +1615,7 @@ function checkout() {
 
   scaleItems.forEach((item, i) => {
     if (item.dim !== lastDim) {
-      scaleHtml += `<div class="scale-group-label">${dimTitles[item.dim]}</div>`;
+      scaleHtml += `<div class="scale-group-label">Your Opinion</div>`;
       lastDim = item.dim;
     }
 
@@ -1671,20 +1754,26 @@ function computeData() {
     study_id: studyId,
     session_id: sessionId,
     
-    explore_1: survey.scale.explore_1 ?? null,
-    explore_2: survey.scale.explore_2 ?? null,
-    explore_3: survey.scale.explore_3 ?? null,
-    explore_4: survey.scale.explore_4 ?? null,
-    agency_1: survey.scale.agency_1 ?? null,
-    agency_2: survey.scale.agency_2 ?? null,
-    agency_3: survey.scale.agency_3 ?? null,
-    browse_enjoy_1: survey.mcheck.browse_enjoy_1 ?? null,
-    browse_enjoy_2: survey.mcheck.browse_enjoy_2 ?? null,
-    browse_enjoy_3: survey.mcheck.browse_enjoy_3 ?? null,
-    browse_enjoy_4: survey.mcheck.browse_enjoy_4 ?? null,
+    flu1: survey.scale.flu1 ?? null,
+    flu2: survey.scale.flu2 ?? null,
+    exp1: survey.scale.exp1 ?? null,
+    exp2: survey.scale.exp2 ?? null,
+    ctrl1: survey.scale.ctrl1 ?? null,
+    ctrl2: survey.scale.ctrl2 ?? null,
+    enj1: survey.mcheck.enj1 ?? null,
+    enj2: survey.mcheck.enj2 ?? null,
+    app1: survey.mcheck.app1 ?? null,
+    app2: survey.mcheck.app2 ?? null,
+    mc1: survey.mcheck.mc1 ?? null,
+    mc2: survey.mcheck.mc2 ?? null,
+    mc3: survey.mcheck.mc3 ?? null,
+
+    time_to_first_selection_ms: firstSelectionTime,
+
+    selection_changes: selectionChanges,      
 
     DV_total_items: totalItems,
-    DV_unique_designs: uniqueDesigns,
+    DV_variety_index: uniqueDesigns,
     DV_repeated_units: repeatedUnits,
 
     behavior_scroll_px: behavior.max_scroll_y,
@@ -1695,6 +1784,7 @@ function computeData() {
     behavior_total_hover_count: totalHoverCount,
     behavior_total_hover_ms: Math.round(totalHoverMs),
 
+    
 
     demo_gender: survey.gender,
     demo_age: survey.age ? Number(survey.age) : null,
@@ -1797,7 +1887,7 @@ sendToGoogleSheet(sheetData);
 
   logEvent("survey_submitted", {
     total_items: d.DV_total_items,
-    unique_designs: d.DV_unique_designs,
+    unique_designs: d.DV_variety_index,
   });
   document.getElementById("sheet").innerHTML = `
     <div class="done">
@@ -1828,7 +1918,7 @@ function flattenForCSV(d) {
     participant_id: d.participant_id,
     condition: d.condition,
     DV_total_items: d.DV_total_items,
-    DV_unique_designs: d.DV_unique_designs,
+    DV_variety_index: d.DV_variety_index,
     DV_repeated_units: d.DV_repeated_units,
     behavior_scroll_px: d.behavior_scroll_px,
     behavior_scroll_ratio: d.behavior_scroll_ratio,
@@ -1902,6 +1992,20 @@ window.goToSlide = function(container, index) {
   });
   container.dataset.current = index;
 };
+
+function setupLazyHoverImages() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mouseenter', function onFirstHover() {
+      const hoverImg = card.querySelector('.img-hover');
+      if (hoverImg && hoverImg.dataset.src) {
+        hoverImg.src = hoverImg.dataset.src;
+        hoverImg.removeAttribute('data-src');
+      }
+      card.removeEventListener('mouseenter', onFirstHover);
+    }, { once: true });
+  });
+}
+
 </script>
 </body>
 </html>
